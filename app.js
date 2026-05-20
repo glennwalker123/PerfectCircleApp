@@ -285,8 +285,8 @@
       const sweep = Math.abs(totalAngle);
       const start = rawPoints[0];
       const closeDist = Math.hypot(raw.x - start.x, raw.y - start.y);
-      const tol = Math.max(8, Math.min(16, fit.r * 0.07));
-      if (sweep > Math.PI * 1.9 && closeDist < tol) {
+      const tol = Math.max(5, Math.min(11, fit.r * 0.046));
+      if (sweep > Math.PI * 1.94 && closeDist < tol) {
         celebrated = true;
         rawPoints.push({ x: start.x, y: start.y });
         points.push({ x: start.x, y: start.y });
