@@ -85,7 +85,7 @@
     e.preventDefault();
   }
 
-  const SMOOTH = 0.35;
+  const SMOOTH = 0.2;
   function onMove(e) {
     if (!drawing || e.pointerId !== activePointerId) return;
     const raw = getPos(e);
@@ -182,7 +182,7 @@
       totalAngle += d;
     }
     const sweep = Math.abs(totalAngle);
-    if (sweep < Math.PI * 1.5) {
+    if (sweep < Math.PI * 1.3) {
       return { valid: false, reason: 'Not a full loop — keep going around' };
     }
     const sweepFactor = Math.min(1, sweep / (2 * Math.PI));
@@ -194,11 +194,12 @@
     }
     const rmsDev = Math.sqrt(sumSq / radii.length);
 
-    let roundness = 1 - rmsDev * 4;
+    let roundness = 1 - rmsDev * 2.2;
     roundness = Math.max(0, Math.min(1, roundness));
 
-    const raw = roundness * 0.82 + closure * 0.10 + sweepFactor * 0.08;
-    const score = Math.round(Math.max(0, Math.min(1, raw)) * 100);
+    const raw = roundness * 0.85 + closure * 0.07 + sweepFactor * 0.08;
+    const eased = Math.pow(Math.max(0, Math.min(1, raw)), 0.75);
+    const score = Math.round(eased * 100);
 
     return { valid: true, score, cx, cy, r: meanR };
   }
