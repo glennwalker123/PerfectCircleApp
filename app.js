@@ -268,9 +268,20 @@
       const sweep = Math.abs(totalAngle);
       const start = rawPoints[0];
       const closeDist = Math.hypot(raw.x - start.x, raw.y - start.y);
-      if (sweep > Math.PI * 1.7 && closeDist < fit.r * 0.3) {
+      const tol = Math.max(10, Math.min(20, fit.r * 0.09));
+      if (sweep > Math.PI * 1.85 && closeDist < tol) {
         celebrated = true;
-        spawnCelebrate(display.x, display.y);
+        rawPoints.push({ x: start.x, y: start.y });
+        points.push({ x: start.x, y: start.y });
+        redraw();
+        spawnCelebrate(start.x, start.y);
+        drawing = false;
+        const pid = activePointerId;
+        activePointerId = null;
+        try { canvas.releasePointerCapture(pid); } catch (_) {}
+        finishStroke();
+        e.preventDefault();
+        return;
       }
     }
     e.preventDefault();
