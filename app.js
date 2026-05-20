@@ -41,9 +41,18 @@
     ctx.lineWidth = 4;
     ctx.strokeStyle = strokeColor || '#7aa2ff';
     ctx.beginPath();
-    ctx.moveTo(points[0].x, points[0].y);
-    for (let i = 1; i < points.length; i++) {
-      ctx.lineTo(points[i].x, points[i].y);
+    if (points.length < 3) {
+      ctx.moveTo(points[0].x, points[0].y);
+      ctx.lineTo(points[1].x, points[1].y);
+    } else {
+      ctx.moveTo(points[0].x, points[0].y);
+      for (let i = 1; i < points.length - 1; i++) {
+        const mx = (points[i].x + points[i + 1].x) / 2;
+        const my = (points[i].y + points[i + 1].y) / 2;
+        ctx.quadraticCurveTo(points[i].x, points[i].y, mx, my);
+      }
+      const last = points[points.length - 1];
+      ctx.lineTo(last.x, last.y);
     }
     ctx.stroke();
   }
@@ -76,10 +85,15 @@
     e.preventDefault();
   }
 
+  const SMOOTH = 0.35;
   function onMove(e) {
     if (!drawing || e.pointerId !== activePointerId) return;
-    const p = getPos(e);
+    const raw = getPos(e);
     const last = points[points.length - 1];
+    const p = {
+      x: last.x + (raw.x - last.x) * SMOOTH,
+      y: last.y + (raw.y - last.y) * SMOOTH,
+    };
     const dx = p.x - last.x;
     const dy = p.y - last.y;
     if (dx * dx + dy * dy >= 1) {
