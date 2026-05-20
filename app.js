@@ -9,6 +9,7 @@
   const clearBtn = document.getElementById('clearBtn');
 
   let dpr = Math.max(1, window.devicePixelRatio || 1);
+  let rawPoints = [];
   let points = [];
   let drawing = false;
   let activePointerId = null;
@@ -25,6 +26,7 @@
   }
 
   function clearStage() {
+    rawPoints = [];
     points = [];
     scoreCard.hidden = true;
     hintEl.textContent = 'Draw a circle in one stroke';
@@ -73,31 +75,67 @@
     return { x: e.clientX - rect.left, y: e.clientY - rect.top };
   }
 
+  function fitCircle(pts) {
+    let sx = 0, sy = 0;
+    for (const p of pts) { sx += p.x; sy += p.y; }
+    const cx = sx / pts.length;
+    const cy = sy / pts.length;
+    let sumR = 0;
+    for (const p of pts) sumR += Math.hypot(p.x - cx, p.y - cy);
+    return { cx, cy, r: sumR / pts.length };
+  }
+
+  const ASSIST_MAX = 0.75;
+  const DISPLAY_SMOOTH = 0.35;
+
   function onDown(e) {
     if (activePointerId !== null) return;
     activePointerId = e.pointerId;
     canvas.setPointerCapture(e.pointerId);
     drawing = true;
-    points = [getPos(e)];
+    const p = getPos(e);
+    rawPoints = [p];
+    points = [p];
     scoreCard.hidden = true;
     hintEl.textContent = 'Keep going…';
     redraw();
     e.preventDefault();
   }
 
-  const SMOOTH = 0.2;
   function onMove(e) {
     if (!drawing || e.pointerId !== activePointerId) return;
     const raw = getPos(e);
-    const last = points[points.length - 1];
-    const p = {
-      x: last.x + (raw.x - last.x) * SMOOTH,
-      y: last.y + (raw.y - last.y) * SMOOTH,
+    const lastRaw = rawPoints[rawPoints.length - 1];
+    const rdx = raw.x - lastRaw.x;
+    const rdy = raw.y - lastRaw.y;
+    if (rdx * rdx + rdy * rdy < 1) { e.preventDefault(); return; }
+    rawPoints.push(raw);
+
+    let target = raw;
+    if (rawPoints.length > 20) {
+      const fit = fitCircle(rawPoints);
+      const ang = Math.atan2(raw.y - fit.cy, raw.x - fit.cx);
+      const onCircle = {
+        x: fit.cx + Math.cos(ang) * fit.r,
+        y: fit.cy + Math.sin(ang) * fit.r,
+      };
+      const confidence = Math.min(1, (rawPoints.length - 20) / 30);
+      const assist = ASSIST_MAX * confidence;
+      target = {
+        x: raw.x + (onCircle.x - raw.x) * assist,
+        y: raw.y + (onCircle.y - raw.y) * assist,
+      };
+    }
+
+    const lastDisplay = points[points.length - 1];
+    const display = {
+      x: lastDisplay.x + (target.x - lastDisplay.x) * DISPLAY_SMOOTH,
+      y: lastDisplay.y + (target.y - lastDisplay.y) * DISPLAY_SMOOTH,
     };
-    const dx = p.x - last.x;
-    const dy = p.y - last.y;
+    const dx = display.x - lastDisplay.x;
+    const dy = display.y - lastDisplay.y;
     if (dx * dx + dy * dy >= 1) {
-      points.push(p);
+      points.push(display);
       redraw();
     }
     e.preventDefault();
@@ -113,11 +151,11 @@
   }
 
   function finishStroke() {
-    if (points.length < 8) {
+    if (rawPoints.length < 8) {
       hintEl.textContent = 'Too short — try drawing a full circle';
       return;
     }
-    const result = scoreCircle(points);
+    const result = scoreCircle(rawPoints);
     if (!result.valid) {
       hintEl.textContent = result.reason;
       redraw('#ff7a7a');
@@ -151,21 +189,17 @@
     if (s >= 70) return 'Pretty good';
     if (s >= 50) return 'Not bad';
     if (s >= 30) return 'Keep practicing';
-    return 'Give it another go';
+    return 'That is not a circle';
   }
 
   function scoreCircle(pts) {
-    let sx = 0, sy = 0;
-    for (const p of pts) { sx += p.x; sy += p.y; }
-    const cx = sx / pts.length;
-    const cy = sy / pts.length;
-
-    const radii = pts.map(p => Math.hypot(p.x - cx, p.y - cy));
-    const meanR = radii.reduce((a, b) => a + b, 0) / radii.length;
+    const { cx, cy, r: meanR } = fitCircle(pts);
 
     if (meanR < 20) {
       return { valid: false, reason: 'Too small — draw a bigger circle' };
     }
+
+    const radii = pts.map(p => Math.hypot(p.x - cx, p.y - cy));
 
     const start = pts[0];
     const end = pts[pts.length - 1];
@@ -188,18 +222,33 @@
     const sweepFactor = Math.min(1, sweep / (2 * Math.PI));
 
     let sumSq = 0;
+    let maxDev = 0;
     for (const r of radii) {
       const d = (r - meanR) / meanR;
       sumSq += d * d;
+      const ad = Math.abs(d);
+      if (ad > maxDev) maxDev = ad;
     }
     const rmsDev = Math.sqrt(sumSq / radii.length);
 
-    let roundness = 1 - rmsDev * 2.2;
+    const closed = pts.concat([pts[0]]);
+    let area = 0;
+    let perim = 0;
+    for (let i = 0; i < closed.length - 1; i++) {
+      const a = closed[i], b = closed[i + 1];
+      area += a.x * b.y - b.x * a.y;
+      perim += Math.hypot(b.x - a.x, b.y - a.y);
+    }
+    area = Math.abs(area) / 2;
+    const isoQ = perim > 0 ? (4 * Math.PI * area) / (perim * perim) : 0;
+    const shape = Math.max(0, Math.min(1, (isoQ - 0.72) / 0.28));
+
+    const radialFactor = Math.max(0, 1 - rmsDev * 2.6 - maxDev * 0.6);
+    let roundness = radialFactor * shape;
     roundness = Math.max(0, Math.min(1, roundness));
 
-    const raw = roundness * 0.85 + closure * 0.07 + sweepFactor * 0.08;
-    const eased = Math.pow(Math.max(0, Math.min(1, raw)), 0.75);
-    const score = Math.round(eased * 100);
+    const raw = roundness * 0.88 + closure * 0.06 + sweepFactor * 0.06;
+    const score = Math.round(Math.max(0, Math.min(1, raw)) * 100);
 
     return { valid: true, score, cx, cy, r: meanR };
   }
