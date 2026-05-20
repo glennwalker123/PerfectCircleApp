@@ -20,6 +20,9 @@
   let celebrated = false;
   let animActive = false;
   let audioCtx = null;
+  let markerState = 'idle';
+  let markerSize = 2.5;
+  let markerTargetSize = 2.5;
 
   function resizeCanvas() {
     dpr = Math.max(1, window.devicePixelRatio || 1);
@@ -35,10 +38,20 @@
     points = [];
     particles = [];
     celebrated = false;
+    setMarker('idle', true);
     scoreCard.hidden = true;
     hintEl.textContent = 'Draw a circle in one stroke';
     const rect = canvas.getBoundingClientRect();
     ctx.clearRect(0, 0, rect.width, rect.height);
+  }
+
+  function setMarker(state, snap) {
+    markerState = state;
+    if (state === 'idle')    markerTargetSize = 2.5;
+    if (state === 'success') markerTargetSize = 7;
+    if (state === 'fail')    markerTargetSize = 5;
+    if (snap) markerSize = markerTargetSize;
+    startAnim();
   }
 
   function redraw(strokeColor) {
@@ -67,18 +80,23 @@
     }
     if (points.length > 0) {
       const s = points[0];
+      const palette = markerState === 'success'
+        ? { dot: 'rgba(255,235,150,0.95)', ring: 'rgba(255,235,150,0.75)', glow: 'rgba(255,220,130,0.95)' }
+        : markerState === 'fail'
+          ? { dot: 'rgba(255,110,110,0.95)', ring: 'rgba(255,100,100,0.75)', glow: 'rgba(255,90,90,0.9)' }
+          : { dot: 'rgba(255,255,255,0.95)', ring: 'rgba(255,255,255,0.55)', glow: 'rgba(255,255,255,0.6)' };
       ctx.save();
-      ctx.shadowColor = 'rgba(255, 220, 130, 0.9)';
-      ctx.shadowBlur = 14;
-      ctx.fillStyle = 'rgba(255, 235, 150, 0.95)';
+      ctx.shadowColor = palette.glow;
+      ctx.shadowBlur = markerState === 'idle' ? 8 : 16;
+      ctx.fillStyle = palette.dot;
       ctx.beginPath();
-      ctx.arc(s.x, s.y, 5, 0, Math.PI * 2);
+      ctx.arc(s.x, s.y, markerSize, 0, Math.PI * 2);
       ctx.fill();
       ctx.shadowBlur = 0;
-      ctx.lineWidth = 2;
-      ctx.strokeStyle = 'rgba(255, 235, 150, 0.7)';
+      ctx.lineWidth = 1.5;
+      ctx.strokeStyle = palette.ring;
       ctx.beginPath();
-      ctx.arc(s.x, s.y, 9, 0, Math.PI * 2);
+      ctx.arc(s.x, s.y, markerSize * 1.9, 0, Math.PI * 2);
       ctx.stroke();
       ctx.restore();
     }
@@ -119,6 +137,7 @@
 
   function spawnCelebrate(x, y) {
     playChime();
+    setMarker('success');
     for (let i = 0; i < 16; i++) {
       const angle = (i / 16) * Math.PI * 2 + Math.random() * 0.4;
       const speed = 90 + Math.random() * 110;
@@ -153,14 +172,36 @@
         p.life -= dt * p.decay;
       }
       particles = particles.filter(p => p.life > 0);
+      markerSize += (markerTargetSize - markerSize) * 0.2;
+      const markerAnimating = Math.abs(markerTargetSize - markerSize) > 0.05;
       redraw();
-      if (particles.length > 0) {
+      if (particles.length > 0 || markerAnimating) {
         requestAnimationFrame(step);
       } else {
+        markerSize = markerTargetSize;
         animActive = false;
       }
     }
     requestAnimationFrame(step);
+  }
+
+  function playBuzz() {
+    try {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      const now = audioCtx.currentTime;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(220, now);
+      osc.frequency.exponentialRampToValueAtTime(95, now + 0.32);
+      gain.gain.setValueAtTime(0, now);
+      gain.gain.linearRampToValueAtTime(0.18, now + 0.01);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.38);
+      osc.connect(gain).connect(audioCtx.destination);
+      osc.start(now);
+      osc.stop(now + 0.42);
+    } catch (_) {}
   }
 
   function playChime() {
@@ -224,6 +265,7 @@
     points = [p];
     particles = [];
     celebrated = false;
+    setMarker('idle', true);
     try {
       if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       if (audioCtx.state === 'suspended') audioCtx.resume();
@@ -321,10 +363,16 @@
     const result = scoreCircle(rawPoints);
     if (!result.valid) {
       hintEl.textContent = result.reason;
+      setMarker('fail');
+      playBuzz();
       redraw('#ff7a7a');
       return;
     }
     const score = result.score;
+    if (!celebrated) {
+      setMarker('fail');
+      playBuzz();
+    }
     redraw(strokeColorForScore(score));
     drawIdealCircle(result.cx, result.cy, result.r, 'rgba(255,255,255,0.35)');
     scoreNumber.textContent = score;
