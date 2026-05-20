@@ -23,6 +23,7 @@
   let markerState = 'idle';
   let markerSize = 2.5;
   let markerTargetSize = 2.5;
+  let idealCircle = null;
 
   function resizeCanvas() {
     dpr = Math.max(1, window.devicePixelRatio || 1);
@@ -38,6 +39,7 @@
     points = [];
     particles = [];
     celebrated = false;
+    idealCircle = null;
     setMarker('idle', true);
     scoreCard.hidden = true;
     hintEl.textContent = 'Draw a circle in one stroke';
@@ -57,6 +59,9 @@
   function redraw(strokeColor) {
     const rect = canvas.getBoundingClientRect();
     ctx.clearRect(0, 0, rect.width, rect.height);
+    if (idealCircle) {
+      drawIdealCircle(idealCircle.cx, idealCircle.cy, idealCircle.r, 'rgba(255,255,255,0.35)');
+    }
     if (points.length >= 2) {
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
@@ -265,6 +270,7 @@
     points = [p];
     particles = [];
     celebrated = false;
+    idealCircle = null;
     setMarker('idle', true);
     try {
       if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -373,8 +379,8 @@
       setMarker('fail');
       playBuzz();
     }
+    idealCircle = { cx: result.cx, cy: result.cy, r: result.r };
     redraw(strokeColorForScore(score));
-    drawIdealCircle(result.cx, result.cy, result.r, 'rgba(255,255,255,0.35)');
     scoreNumber.textContent = score;
     scoreGrade.textContent = gradeText(score);
     scoreCard.hidden = false;
