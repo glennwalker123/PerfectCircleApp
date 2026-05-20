@@ -18,7 +18,6 @@
 
   let particles = [];
   let celebrated = false;
-  let connectEnds = false;
   let animActive = false;
   let audioCtx = null;
 
@@ -36,7 +35,6 @@
     points = [];
     particles = [];
     celebrated = false;
-    connectEnds = false;
     scoreCard.hidden = true;
     hintEl.textContent = 'Draw a circle in one stroke';
     const rect = canvas.getBoundingClientRect();
@@ -67,17 +65,20 @@
       }
       ctx.stroke();
     }
-    if (connectEnds && points.length > 2) {
-      const a = points[points.length - 1];
-      const b = points[0];
+    if (points.length > 0) {
+      const s = points[0];
       ctx.save();
-      ctx.setLineDash([5, 5]);
-      ctx.lineWidth = 2;
-      ctx.strokeStyle = strokeColor || 'rgba(255,255,255,0.55)';
-      ctx.globalAlpha = 0.7;
+      ctx.shadowColor = 'rgba(255, 220, 130, 0.9)';
+      ctx.shadowBlur = 14;
+      ctx.fillStyle = 'rgba(255, 235, 150, 0.95)';
       ctx.beginPath();
-      ctx.moveTo(a.x, a.y);
-      ctx.lineTo(b.x, b.y);
+      ctx.arc(s.x, s.y, 5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = 'rgba(255, 235, 150, 0.7)';
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, 9, 0, Math.PI * 2);
       ctx.stroke();
       ctx.restore();
     }
@@ -223,7 +224,6 @@
     points = [p];
     particles = [];
     celebrated = false;
-    connectEnds = false;
     try {
       if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       if (audioCtx.state === 'suspended') audioCtx.resume();
@@ -325,7 +325,6 @@
       return;
     }
     const score = result.score;
-    connectEnds = !celebrated;
     redraw(strokeColorForScore(score));
     drawIdealCircle(result.cx, result.cy, result.r, 'rgba(255,255,255,0.35)');
     scoreNumber.textContent = score;
