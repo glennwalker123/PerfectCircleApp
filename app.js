@@ -7,6 +7,9 @@
   const bestEl = document.getElementById('bestScore');
   const hintEl = document.getElementById('hint');
   const clearBtn = document.getElementById('clearBtn');
+  const streakRow = document.getElementById('streakRow');
+  const streakCount = document.getElementById('streakCount');
+  const footerStreak = document.getElementById('footerStreak');
 
   let dpr = Math.max(1, window.devicePixelRatio || 1);
   let rawPoints = [];
@@ -14,7 +17,11 @@
   let drawing = false;
   let activePointerId = null;
   let best = parseInt(localStorage.getItem('pc_best') || '0', 10);
+  let streak = parseInt(localStorage.getItem('pc_streak') || '0', 10);
+  let tutorialRound = parseInt(localStorage.getItem('pc_tutorial') || '0', 10);
+  let templateCircle = null;
   if (best > 0) bestEl.textContent = best;
+  footerStreak.textContent = streak;
 
   let particles = [];
   let celebrated = false;
@@ -31,7 +38,24 @@
     canvas.width = Math.round(rect.width * dpr);
     canvas.height = Math.round(rect.height * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    refreshTemplate();
     redraw();
+  }
+
+  function refreshTemplate() {
+    const rect = canvas.getBoundingClientRect();
+    if (tutorialRound < 3 && rect.width > 0) {
+      const base = Math.min(rect.width, rect.height);
+      const sizes = [0.18, 0.24, 0.30];
+      const r = base * sizes[Math.min(tutorialRound, sizes.length - 1)];
+      templateCircle = { cx: rect.width / 2, cy: rect.height / 2, r };
+      hintEl.textContent = `Trace the circle  ·  ${tutorialRound + 1} of 3`;
+    } else {
+      templateCircle = null;
+      if (!drawing && rawPoints.length === 0) {
+        hintEl.textContent = 'Draw a circle in one stroke';
+      }
+    }
   }
 
   function clearStage() {
@@ -42,9 +66,11 @@
     idealCircle = null;
     setMarker('idle', true);
     scoreCard.hidden = true;
-    hintEl.textContent = 'Draw a circle in one stroke';
+    streakRow.hidden = true;
+    refreshTemplate();
     const rect = canvas.getBoundingClientRect();
     ctx.clearRect(0, 0, rect.width, rect.height);
+    redraw();
   }
 
   function setMarker(state, snap) {
@@ -59,6 +85,9 @@
   function redraw(strokeColor) {
     const rect = canvas.getBoundingClientRect();
     ctx.clearRect(0, 0, rect.width, rect.height);
+    if (templateCircle && !idealCircle) {
+      drawIdealCircle(templateCircle.cx, templateCircle.cy, templateCircle.r, 'rgba(255,255,255,0.28)');
+    }
     if (idealCircle) {
       drawIdealCircle(idealCircle.cx, idealCircle.cy, idealCircle.r, 'rgba(255,255,255,0.35)');
     }
@@ -371,26 +400,66 @@
       setMarker('fail');
       playBuzz();
       redraw('#ff7a7a');
+      breakStreak();
       return;
     }
     const score = result.score;
-    const passed = celebrated && score >= 50;
+    let matchesTemplate = true;
+    if (templateCircle) {
+      const centerOff = Math.hypot(result.cx - templateCircle.cx, result.cy - templateCircle.cy);
+      const radiusOff = Math.abs(result.r - templateCircle.r);
+      matchesTemplate = centerOff < templateCircle.r * 0.4 && radiusOff < templateCircle.r * 0.4;
+    }
+    const passed = celebrated && score >= 50 && matchesTemplate;
     if (passed) {
       spawnCelebrate(rawPoints[0].x, rawPoints[0].y);
+      bumpStreak();
+      if (templateCircle) {
+        tutorialRound++;
+        localStorage.setItem('pc_tutorial', String(tutorialRound));
+      }
     } else {
       setMarker('fail');
       playBuzz();
+      breakStreak();
     }
     idealCircle = { cx: result.cx, cy: result.cy, r: result.r };
     redraw(passed ? strokeColorForScore(score) : '#ff7a7a');
     scoreNumber.textContent = score;
-    scoreGrade.textContent = gradeText(score);
+    let grade = gradeText(score);
+    if (templateCircle && !matchesTemplate && celebrated) {
+      grade = 'Trace the guide circle';
+    }
+    scoreGrade.textContent = grade;
     scoreCard.hidden = false;
+    if (streak > 0) {
+      streakCount.textContent = streak;
+      streakRow.hidden = false;
+    } else {
+      streakRow.hidden = true;
+    }
     hintEl.textContent = 'Tap "Try again" to retry';
     if (score > best) {
       best = score;
       localStorage.setItem('pc_best', String(best));
       bestEl.textContent = best;
+    }
+  }
+
+  function bumpStreak() {
+    streak += 1;
+    localStorage.setItem('pc_streak', String(streak));
+    footerStreak.textContent = streak;
+    streakRow.classList.remove('flash');
+    void streakRow.offsetWidth;
+    streakRow.classList.add('flash');
+  }
+
+  function breakStreak() {
+    if (streak !== 0) {
+      streak = 0;
+      localStorage.setItem('pc_streak', '0');
+      footerStreak.textContent = '0';
     }
   }
 

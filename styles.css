@@ -140,12 +140,59 @@ html, body {
   filter: brightness(0.95);
 }
 
-.best {
+.stats {
   font-size: 14px;
   color: #cdd6ee;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-.best span {
+.stat span {
   font-weight: 700;
   color: #ffffff;
+  margin-left: 4px;
+}
+
+.stat-sep {
+  opacity: 0.4;
+}
+
+.streak-row {
+  margin-top: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: rgba(255, 138, 76, 0.15);
+  border: 1px solid rgba(255, 138, 76, 0.3);
+  border-radius: 999px;
+  font-size: 14px;
+  color: #ffd0a8;
+}
+
+.streak-flame {
+  font-size: 16px;
+  line-height: 1;
+}
+
+.streak-count {
+  font-weight: 800;
+  color: #ffffff;
+  font-size: 16px;
+}
+
+.streak-label {
+  color: #ffd0a8;
+  opacity: 0.85;
+}
+
+.streak-row.flash {
+  animation: streak-flash 600ms ease-out;
+}
+
+@keyframes streak-flash {
+  0%   { transform: scale(1);    background: rgba(255, 200, 100, 0.5); }
+  40%  { transform: scale(1.18); background: rgba(255, 220, 130, 0.7); }
+  100% { transform: scale(1);    background: rgba(255, 138, 76, 0.15); }
 }
