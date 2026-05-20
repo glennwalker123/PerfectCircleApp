@@ -339,7 +339,6 @@
         rawPoints.push({ x: start.x, y: start.y });
         points.push({ x: start.x, y: start.y });
         redraw();
-        spawnCelebrate(start.x, start.y);
         drawing = false;
         const pid = activePointerId;
         activePointerId = null;
@@ -375,7 +374,9 @@
       return;
     }
     const score = result.score;
-    if (!celebrated) {
+    if (celebrated && score >= 50) {
+      spawnCelebrate(rawPoints[0].x, rawPoints[0].y);
+    } else {
       setMarker('fail');
       playBuzz();
     }
