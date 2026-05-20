@@ -85,8 +85,8 @@
     return { cx, cy, r: sumR / pts.length };
   }
 
-  const ASSIST_MAX = 0.75;
-  const DISPLAY_SMOOTH = 0.35;
+  const ASSIST_MAX = 0.55;
+  const DISPLAY_SMOOTH = 0.4;
 
   function onDown(e) {
     if (activePointerId !== null) return;
@@ -189,10 +189,24 @@
     if (s >= 70) return 'Pretty good';
     if (s >= 50) return 'Not bad';
     if (s >= 30) return 'Keep practicing';
-    return 'That is not a circle';
+    return 'Give it another go';
   }
 
-  function scoreCircle(pts) {
+  function smoothPath(pts) {
+    if (pts.length < 5) return pts.slice();
+    const out = [pts[0]];
+    for (let i = 1; i < pts.length - 1; i++) {
+      const a = pts[i - 1], b = pts[i], c = pts[i + 1];
+      out.push({ x: (a.x + 2 * b.x + c.x) / 4, y: (a.y + 2 * b.y + c.y) / 4 });
+    }
+    out.push(pts[pts.length - 1]);
+    return out;
+  }
+
+  function scoreCircle(rawPts) {
+    let pts = rawPts;
+    for (let i = 0; i < 2; i++) pts = smoothPath(pts);
+
     const { cx, cy, r: meanR } = fitCircle(pts);
 
     if (meanR < 20) {
@@ -241,11 +255,12 @@
     }
     area = Math.abs(area) / 2;
     const isoQ = perim > 0 ? (4 * Math.PI * area) / (perim * perim) : 0;
-    const shape = Math.max(0, Math.min(1, (isoQ - 0.72) / 0.28));
 
-    const radialFactor = Math.max(0, 1 - rmsDev * 2.6 - maxDev * 0.6);
-    let roundness = radialFactor * shape;
-    roundness = Math.max(0, Math.min(1, roundness));
+    const wobbleScore = Math.max(0, 1 - rmsDev * 3.5);
+    const outlierScore = Math.max(0, 1 - maxDev * 2);
+    const shapeScore = Math.max(0, Math.min(1, (isoQ - 0.78) / 0.2));
+    const radial = (wobbleScore + outlierScore) / 2;
+    const roundness = Math.sqrt(Math.max(0, radial) * Math.max(0, shapeScore));
 
     const raw = roundness * 0.88 + closure * 0.06 + sweepFactor * 0.06;
     const score = Math.round(Math.max(0, Math.min(1, raw)) * 100);
