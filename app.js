@@ -18,6 +18,7 @@
 
   let particles = [];
   let celebrated = false;
+  let connectEnds = false;
   let animActive = false;
   let audioCtx = null;
 
@@ -35,6 +36,7 @@
     points = [];
     particles = [];
     celebrated = false;
+    connectEnds = false;
     scoreCard.hidden = true;
     hintEl.textContent = 'Draw a circle in one stroke';
     const rect = canvas.getBoundingClientRect();
@@ -64,6 +66,20 @@
         ctx.lineTo(last.x, last.y);
       }
       ctx.stroke();
+    }
+    if (connectEnds && points.length > 2) {
+      const a = points[points.length - 1];
+      const b = points[0];
+      ctx.save();
+      ctx.setLineDash([5, 5]);
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = strokeColor || 'rgba(255,255,255,0.55)';
+      ctx.globalAlpha = 0.7;
+      ctx.beginPath();
+      ctx.moveTo(a.x, a.y);
+      ctx.lineTo(b.x, b.y);
+      ctx.stroke();
+      ctx.restore();
     }
     drawParticles();
   }
@@ -207,6 +223,7 @@
     points = [p];
     particles = [];
     celebrated = false;
+    connectEnds = false;
     try {
       if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       if (audioCtx.state === 'suspended') audioCtx.resume();
@@ -268,8 +285,8 @@
       const sweep = Math.abs(totalAngle);
       const start = rawPoints[0];
       const closeDist = Math.hypot(raw.x - start.x, raw.y - start.y);
-      const tol = Math.max(10, Math.min(20, fit.r * 0.09));
-      if (sweep > Math.PI * 1.85 && closeDist < tol) {
+      const tol = Math.max(8, Math.min(16, fit.r * 0.07));
+      if (sweep > Math.PI * 1.9 && closeDist < tol) {
         celebrated = true;
         rawPoints.push({ x: start.x, y: start.y });
         points.push({ x: start.x, y: start.y });
@@ -308,6 +325,7 @@
       return;
     }
     const score = result.score;
+    connectEnds = !celebrated;
     redraw(strokeColorForScore(score));
     drawIdealCircle(result.cx, result.cy, result.r, 'rgba(255,255,255,0.35)');
     scoreNumber.textContent = score;
