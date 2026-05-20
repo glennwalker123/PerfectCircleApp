@@ -51,7 +51,7 @@
     markerState = state;
     if (state === 'idle')    markerTargetSize = 2.5;
     if (state === 'success') markerTargetSize = 7;
-    if (state === 'fail')    markerTargetSize = 5;
+    if (state === 'fail')    markerTargetSize = 2.5;
     if (snap) markerSize = markerTargetSize;
     startAnim();
   }
@@ -374,14 +374,15 @@
       return;
     }
     const score = result.score;
-    if (celebrated && score >= 50) {
+    const passed = celebrated && score >= 50;
+    if (passed) {
       spawnCelebrate(rawPoints[0].x, rawPoints[0].y);
     } else {
       setMarker('fail');
       playBuzz();
     }
     idealCircle = { cx: result.cx, cy: result.cy, r: result.r };
-    redraw(strokeColorForScore(score));
+    redraw(passed ? strokeColorForScore(score) : '#ff7a7a');
     scoreNumber.textContent = score;
     scoreGrade.textContent = gradeText(score);
     scoreCard.hidden = false;
