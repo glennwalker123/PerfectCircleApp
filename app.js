@@ -16,6 +16,11 @@
   let best = parseInt(localStorage.getItem('pc_best') || '0', 10);
   if (best > 0) bestEl.textContent = best;
 
+  let particles = [];
+  let celebrated = false;
+  let animActive = false;
+  let audioCtx = null;
+
   function resizeCanvas() {
     dpr = Math.max(1, window.devicePixelRatio || 1);
     const rect = canvas.getBoundingClientRect();
@@ -28,6 +33,8 @@
   function clearStage() {
     rawPoints = [];
     points = [];
+    particles = [];
+    celebrated = false;
     scoreCard.hidden = true;
     hintEl.textContent = 'Draw a circle in one stroke';
     const rect = canvas.getBoundingClientRect();
@@ -37,26 +44,128 @@
   function redraw(strokeColor) {
     const rect = canvas.getBoundingClientRect();
     ctx.clearRect(0, 0, rect.width, rect.height);
-    if (points.length < 2) return;
-    ctx.lineCap = 'round';
-    ctx.lineJoin = 'round';
-    ctx.lineWidth = 4;
-    ctx.strokeStyle = strokeColor || '#7aa2ff';
-    ctx.beginPath();
-    if (points.length < 3) {
-      ctx.moveTo(points[0].x, points[0].y);
-      ctx.lineTo(points[1].x, points[1].y);
-    } else {
-      ctx.moveTo(points[0].x, points[0].y);
-      for (let i = 1; i < points.length - 1; i++) {
-        const mx = (points[i].x + points[i + 1].x) / 2;
-        const my = (points[i].y + points[i + 1].y) / 2;
-        ctx.quadraticCurveTo(points[i].x, points[i].y, mx, my);
+    if (points.length >= 2) {
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.lineWidth = 4;
+      ctx.strokeStyle = strokeColor || '#7aa2ff';
+      ctx.beginPath();
+      if (points.length < 3) {
+        ctx.moveTo(points[0].x, points[0].y);
+        ctx.lineTo(points[1].x, points[1].y);
+      } else {
+        ctx.moveTo(points[0].x, points[0].y);
+        for (let i = 1; i < points.length - 1; i++) {
+          const mx = (points[i].x + points[i + 1].x) / 2;
+          const my = (points[i].y + points[i + 1].y) / 2;
+          ctx.quadraticCurveTo(points[i].x, points[i].y, mx, my);
+        }
+        const last = points[points.length - 1];
+        ctx.lineTo(last.x, last.y);
       }
-      const last = points[points.length - 1];
-      ctx.lineTo(last.x, last.y);
+      ctx.stroke();
     }
-    ctx.stroke();
+    drawParticles();
+  }
+
+  function drawParticles() {
+    for (const p of particles) {
+      ctx.save();
+      if (p.star) {
+        drawStar(p.x, p.y, p.size * Math.min(1, p.life * 1.6), p.life);
+      } else {
+        ctx.fillStyle = `hsla(${p.hue}, 100%, 70%, ${p.life})`;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+  }
+
+  function drawStar(cx, cy, r, alpha) {
+    const spikes = 5;
+    ctx.fillStyle = `rgba(255, 235, 150, ${alpha})`;
+    ctx.shadowColor = `rgba(255, 220, 120, ${alpha})`;
+    ctx.shadowBlur = 18 * alpha;
+    ctx.beginPath();
+    for (let i = 0; i < spikes * 2; i++) {
+      const ang = (i / (spikes * 2)) * Math.PI * 2 - Math.PI / 2;
+      const rad = i % 2 === 0 ? r : r * 0.42;
+      const px = cx + Math.cos(ang) * rad;
+      const py = cy + Math.sin(ang) * rad;
+      if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+    }
+    ctx.closePath();
+    ctx.fill();
+  }
+
+  function spawnCelebrate(x, y) {
+    playChime();
+    for (let i = 0; i < 16; i++) {
+      const angle = (i / 16) * Math.PI * 2 + Math.random() * 0.4;
+      const speed = 90 + Math.random() * 110;
+      particles.push({
+        x, y,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed,
+        life: 1,
+        decay: 1.4 + Math.random() * 0.8,
+        size: 3 + Math.random() * 2,
+        hue: 45 + Math.random() * 35,
+      });
+    }
+    particles.push({ x, y, star: true, life: 1, decay: 2.2, size: 28 });
+    startAnim();
+  }
+
+  function startAnim() {
+    if (animActive) return;
+    animActive = true;
+    let lastT = performance.now();
+    function step(t) {
+      const dt = Math.min(0.05, (t - lastT) / 1000);
+      lastT = t;
+      for (const p of particles) {
+        if (!p.star) {
+          p.x += p.vx * dt;
+          p.y += p.vy * dt;
+          p.vx *= 0.9;
+          p.vy *= 0.9;
+        }
+        p.life -= dt * p.decay;
+      }
+      particles = particles.filter(p => p.life > 0);
+      redraw();
+      if (particles.length > 0) {
+        requestAnimationFrame(step);
+      } else {
+        animActive = false;
+      }
+    }
+    requestAnimationFrame(step);
+  }
+
+  function playChime() {
+    try {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      const now = audioCtx.currentTime;
+      const notes = [880, 1320, 1760];
+      notes.forEach((freq, i) => {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.frequency.value = freq;
+        osc.type = 'sine';
+        const start = now + i * 0.06;
+        gain.gain.setValueAtTime(0, start);
+        gain.gain.linearRampToValueAtTime(0.22, start + 0.01);
+        gain.gain.exponentialRampToValueAtTime(0.001, start + 0.5);
+        osc.connect(gain).connect(audioCtx.destination);
+        osc.start(start);
+        osc.stop(start + 0.55);
+      });
+    } catch (_) {}
   }
 
   function drawIdealCircle(cx, cy, r, color) {
@@ -96,6 +205,12 @@
     const p = getPos(e);
     rawPoints = [p];
     points = [p];
+    particles = [];
+    celebrated = false;
+    try {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+    } catch (_) {}
     scoreCard.hidden = true;
     hintEl.textContent = 'Keep going…';
     redraw();
@@ -137,6 +252,26 @@
     if (dx * dx + dy * dy >= 1) {
       points.push(display);
       redraw();
+    }
+
+    if (!celebrated && rawPoints.length > 30) {
+      const fit = fitCircle(rawPoints);
+      let totalAngle = 0;
+      for (let i = 1; i < rawPoints.length; i++) {
+        const a1 = Math.atan2(rawPoints[i - 1].y - fit.cy, rawPoints[i - 1].x - fit.cx);
+        const a2 = Math.atan2(rawPoints[i].y - fit.cy, rawPoints[i].x - fit.cx);
+        let d = a2 - a1;
+        if (d > Math.PI) d -= 2 * Math.PI;
+        if (d < -Math.PI) d += 2 * Math.PI;
+        totalAngle += d;
+      }
+      const sweep = Math.abs(totalAngle);
+      const start = rawPoints[0];
+      const closeDist = Math.hypot(raw.x - start.x, raw.y - start.y);
+      if (sweep > Math.PI * 1.7 && closeDist < fit.r * 0.3) {
+        celebrated = true;
+        spawnCelebrate(display.x, display.y);
+      }
     }
     e.preventDefault();
   }
