@@ -9,86 +9,95 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
 <meta http-equiv="Pragma" content="no-cache" />
 <meta http-equiv="Expires" content="0" />
-<title>ROOTS — The Family Tree of Music</title>
+<title>ROOTS — Guess the Sub-Genre</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="genre.css?v=3" />
+<link rel="stylesheet" href="genre.css?v=4" />
 </head>
 <body>
   <div class="app">
     <header class="topbar">
       <h1>ROOTS</h1>
-      <div class="legend" id="legend"></div>
     </header>
 
     <div class="stage">
-      <div class="map-wrap" id="mapWrap">
-        <svg id="map" xmlns="http://www.w3.org/2000/svg"></svg>
-      </div>
+      <!-- Start -->
+      <section class="view" id="vStart">
+        <div class="big-emoji">🎚️</div>
+        <p class="lead">A crate-digger’s ear test. Each chapter drops you into a scene — hear the cut, name the sub-genre, learn the story.</p>
+        <button class="btn btn-big" id="startBtn">Start</button>
+      </section>
 
-      <div class="hud" id="hud">
-        <!-- Start -->
-        <div class="hud-view" id="hudStart">
-          <p class="panel-text">Hear a track, name the sub-genre, and watch the family tree of music grow — from the Delta blues to UK drill.</p>
-          <button class="btn btn-big" id="startBtn">Start</button>
+      <!-- Chapter intro -->
+      <section class="view" id="vChapter" hidden>
+        <span class="kicker" id="chKicker">Chapter 1 / 8</span>
+        <h2 class="chapter-title" id="chTitle"></h2>
+        <span class="chapter-scene" id="chScene"></span>
+        <p class="lead" id="chIntro"></p>
+        <button class="btn btn-big" id="chBeginBtn">Begin chapter</button>
+      </section>
+
+      <!-- Loading -->
+      <section class="view" id="vLoading" hidden>
+        <div class="spinner"></div>
+        <span class="lead">Cueing the track…</span>
+      </section>
+
+      <!-- Error -->
+      <section class="view" id="vError" hidden>
+        <p class="lead" id="errorText">Couldn’t load this track.</p>
+        <div class="row">
+          <button class="btn btn-ghost" id="retryBtn">Try again</button>
+          <button class="btn" id="skipBtn">Skip</button>
         </div>
+      </section>
 
-        <!-- Chapter intro -->
-        <div class="hud-view" id="hudChapter" hidden>
-          <span class="kicker" id="chapterKicker">Chapter 1 of 5</span>
-          <h2 class="chapter-title" id="chapterTitle">Blue Note</h2>
-          <p class="panel-text" id="chapterText"></p>
-          <button class="btn btn-big" id="chapterBeginBtn">Begin chapter</button>
-        </div>
-
-        <!-- Loading -->
-        <div class="hud-view" id="hudLoading" hidden>
-          <div class="spinner"></div>
-          <span class="panel-text">Cueing the track…</span>
-        </div>
-
-        <!-- Error -->
-        <div class="hud-view" id="hudError" hidden>
-          <span class="panel-text" id="errorText">Couldn’t load a track.</span>
-          <button class="btn" id="retryBtn">Try again</button>
-        </div>
-
-        <!-- Guessing -->
-        <div class="hud-view" id="hudRound" hidden>
-          <div class="now-playing">
-            <div class="eq" id="eq" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
-            <span id="playState">Playing intro…</span>
-            <button class="icon-btn" id="replayBtn" title="Replay intro">↺</button>
+      <!-- Guessing -->
+      <section class="view" id="vRound" hidden>
+        <div class="player">
+          <div class="disc" id="disc">
+            <div class="eq" id="eq" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
           </div>
-          <div class="options" id="options"></div>
-          <button class="btn btn-ghost btn-another" id="anotherBtn" hidden>Hear another track</button>
-        </div>
-
-        <!-- Reveal -->
-        <div class="hud-view reveal" id="hudReveal" hidden>
-          <div class="reveal-head">
-            <span class="reveal-dot" id="revealDot"></span>
-            <span class="reveal-name" id="revealName"></span>
-            <span class="reveal-era" id="revealEra"></span>
+          <div class="player-meta">
+            <span class="round-tag" id="roundTag">Track 1 of 5</span>
+            <span id="playState">Playing…</span>
           </div>
-          <div class="reveal-track" id="revealTrack"></div>
-          <p class="reveal-blurb" id="revealBlurb"></p>
-          <div class="reveal-links" id="revealLinks"></div>
-          <button class="btn btn-big" id="nextBtn">Next</button>
+          <button class="icon-btn" id="replayBtn" title="Replay">↺</button>
         </div>
+        <div class="options" id="options"></div>
+        <button class="textlink" id="anotherBtn" hidden>Hear another track ↻</button>
+      </section>
 
-        <!-- End -->
-        <div class="hud-view" id="hudEnd" hidden>
-          <div class="big-emoji">🎶</div>
-          <p class="panel-text" id="endText"></p>
-          <button class="btn btn-big" id="replayJourneyBtn">Play again</button>
-        </div>
-      </div>
+      <!-- Reveal -->
+      <section class="view reveal" id="vReveal" hidden>
+        <span class="verdict" id="verdict"></span>
+        <h2 class="genre-name" id="revName"></h2>
+        <span class="genre-meta" id="revMeta"></span>
+        <p class="track-line" id="revTrack"></p>
+        <p class="note" id="revNote"></p>
+        <button class="btn btn-big" id="nextBtn">Next</button>
+      </section>
+
+      <!-- Chapter complete -->
+      <section class="view" id="vChapterEnd" hidden>
+        <span class="kicker">Chapter complete</span>
+        <h2 class="chapter-title" id="ceTitle"></h2>
+        <p class="lead" id="ceOutro"></p>
+        <span class="score-line" id="ceScore"></span>
+        <button class="btn btn-big" id="ceNextBtn">Next chapter</button>
+      </section>
+
+      <!-- All done -->
+      <section class="view" id="vEnd" hidden>
+        <div class="big-emoji">🏆</div>
+        <p class="lead" id="endText"></p>
+        <button class="btn btn-big" id="replayAllBtn">Play again</button>
+      </section>
     </div>
 
     <footer class="controls">
-      <span class="stat">Discovered <span id="discovered">0</span>/<span id="total">0</span></span>
+      <span class="stat" id="chapterStat">Chapter —</span>
       <div class="stats">
         <span class="stat">Streak <span id="footerStreak">0</span></span>
         <span class="stat-sep">·</span>
@@ -98,6 +107,6 @@
   </div>
 
   <audio id="player" preload="auto"></audio>
-  <script src="genre.js?v=3"></script>
+  <script src="genre.js?v=4"></script>
 </body>
 </html>
