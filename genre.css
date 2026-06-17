@@ -68,9 +68,11 @@ html, body {
 .row { display: flex; gap: 12px; align-items: center; }
 
 /* ---- Round ---- */
-.points-wrap { display: flex; flex-direction: column; align-items: center; gap: 2px; }
-.points { font-family: var(--display); font-size: 46px; font-weight: 700; line-height: 1; color: var(--accent); font-variant-numeric: tabular-nums; }
-.points-label { font-family: var(--display); font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); }
+.playbar { position: relative; width: 100%; max-width: 440px; height: 12px; border-radius: 999px;
+  background: var(--surface-2); border: 1px solid var(--line); overflow: hidden; }
+.pb-fill { position: absolute; left: 0; top: 0; bottom: 0; width: 0%; background: var(--accent); border-radius: 999px; }
+.pb-tick { position: absolute; top: 0; bottom: 0; width: 2px; background: var(--bg); transform: translateX(-1px); z-index: 2; }
+.pb-hint { font-family: var(--display); font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); margin-top: -6px; }
 
 .player { display: flex; align-items: center; gap: 14px; width: 100%; max-width: 440px; }
 .disc { width: 60px; height: 60px; flex: 0 0 auto; border-radius: 50%;
@@ -96,6 +98,7 @@ html, body {
 .option.correct { background: var(--good); border-color: var(--good); color: #08210a; }
 .option.wrong { background: var(--bad); border-color: var(--bad); color: #2a0608; }
 .option.dim { opacity: 0.3; }
+.option.eliminated { display: none; }
 
 /* ---- Reveal ---- */
 .reveal { gap: 9px; }

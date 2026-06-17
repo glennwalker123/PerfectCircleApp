@@ -57,10 +57,12 @@
 
       <!-- Guessing -->
       <section class="view" id="vRound" hidden>
-        <div class="points-wrap">
-          <span class="points" id="points">1000</span>
-          <span class="points-label">points · answer fast</span>
+        <div class="playbar" id="playbar">
+          <div class="pb-fill" id="pbFill"></div>
+          <span class="pb-tick" style="left:33.33%"></span>
+          <span class="pb-tick" style="left:66.66%"></span>
         </div>
+        <span class="pb-hint" id="pbHint">4 options · answer early for more points</span>
         <div class="player">
           <div class="disc">
             <div class="eq" id="eq" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>

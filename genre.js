@@ -212,7 +212,7 @@
 
   const CLIP_MS = 20000;       // each clip plays 20s
   const CLIPS = 3;             // up to 3 clips per round
-  const MAX_POINTS = 1000, MIN_POINTS = 100;
+  const TIERS = [1000, 600, 300]; // points by phase: 4 options / 3 / 2
   const FETCH_TIMEOUT = 7000;
 
   // ====================================================================
@@ -241,7 +241,8 @@
   const chScene = document.getElementById('chScene');
   const chIntro = document.getElementById('chIntro');
   const clipTag = document.getElementById('clipTag');
-  const pointsEl = document.getElementById('points');
+  const pbFill = document.getElementById('pbFill');
+  const pbHint = document.getElementById('pbHint');
   const playStateEl = document.getElementById('playState');
   const eqEl = document.getElementById('eq');
   const optionsEl = document.getElementById('options');
@@ -274,9 +275,9 @@
   let audioCtx = null;
   let clips = [];              // resolved metas for the active round
   let clipIdx = 0;
-  let roundStart = 0;
-  let timers = [];             // clip-advance timeouts
-  let pointsInterval = null;
+  let timers = [];             // clip-advance + option-removal timeouts
+  let phase = 0;               // 0 = 4 options, 1 = 3 options, 2 = 2 options
+  let roundGenre = null;
   let currentMeta = null;
 
   bestEl.textContent = best;
@@ -344,15 +345,8 @@
   // ====================================================================
   //  Clip playback + points timer
   // ====================================================================
-  function clearTimers() { timers.forEach(clearTimeout); timers = []; if (pointsInterval) { clearInterval(pointsInterval); pointsInterval = null; } }
+  function clearTimers() { timers.forEach(clearTimeout); timers = []; }
   function stopAudio() { try { player.pause(); } catch (_) {} eqEl.classList.add('paused'); }
-
-  function currentPoints() {
-    const windowMs = clips.length * CLIP_MS;
-    const elapsed = Date.now() - roundStart;
-    const frac = Math.min(1, elapsed / windowMs);
-    return Math.max(MIN_POINTS, Math.round(MAX_POINTS - frac * (MAX_POINTS - MIN_POINTS)));
-  }
 
   function playClip(i) {
     clipIdx = i;
@@ -363,20 +357,39 @@
     if (!answered) playStateEl.textContent = 'Listening…';
   }
 
+  // Remove one still-visible WRONG option (keeps the answer + at least one decoy).
+  function removeOneOption() {
+    const wrong = Array.from(optionsEl.querySelectorAll('.option'))
+      .filter((b) => !b.classList.contains('eliminated') && b.textContent !== roundGenre);
+    if (wrong.length <= 1) return; // always leave the answer + one decoy
+    const victim = wrong[Math.floor(Math.random() * wrong.length)];
+    victim.classList.add('eliminated');
+    victim.disabled = true;
+  }
+
   function startSequence() {
-    roundStart = Date.now();
-    clipIdx = 0;
+    phase = 0;
+    const windowMs = clips.length * CLIP_MS;
+
+    // playbar fill across the whole window
+    pbFill.style.transition = 'none';
+    pbFill.style.width = '0%';
+    // force reflow so the transition restarts cleanly
+    void pbFill.offsetWidth;
+    pbFill.style.transition = 'width ' + windowMs + 'ms linear';
+    pbFill.style.width = '100%';
+    pbHint.textContent = '4 options · answer early for more points';
+
     playClip(0);
+    // advance clips
     for (let i = 1; i < clips.length; i++) {
       timers.push(setTimeout(() => { if (!answered) playClip(i); }, i * CLIP_MS));
     }
-    // end of all clips
-    timers.push(setTimeout(() => {
-      if (!answered) { stopAudio(); playStateEl.textContent = 'Last chance — name it'; }
-    }, clips.length * CLIP_MS));
-    // live points
-    pointsEl.textContent = MAX_POINTS;
-    pointsInterval = setInterval(() => { if (!answered) pointsEl.textContent = currentPoints(); }, 150);
+    // option removals at each third of the bar (1/3 and 2/3)
+    timers.push(setTimeout(() => { if (answered) return; phase = 1; removeOneOption(); pbHint.textContent = '3 options left'; }, windowMs / 3));
+    timers.push(setTimeout(() => { if (answered) return; phase = 2; removeOneOption(); pbHint.textContent = '2 options left'; }, (windowMs * 2) / 3));
+    // end of clips
+    timers.push(setTimeout(() => { if (!answered) { stopAudio(); playStateEl.textContent = 'Make your guess'; } }, windowMs));
   }
 
   function replayClip() {
@@ -445,12 +458,12 @@
 
     renderOptions(round, ch);
     show('round');
-    pointsEl.textContent = MAX_POINTS;
     playStateEl.textContent = 'Listening…';
     startSequence();
   }
 
   function renderOptions(round, ch) {
+    roundGenre = round.genre;
     const siblings = shuffle(ch.rounds.map((r) => r.genre).filter((g) => g !== round.genre));
     const outside = shuffle(ALL_GENRES.filter((g) => g !== round.genre && siblings.indexOf(g) < 0));
     const distractors = siblings.concat(outside).slice(0, 3);
@@ -466,7 +479,7 @@
 
   function handleGuess(choice, round, btn) {
     if (answered) return;
-    const award = currentPoints();
+    const award = TIERS[Math.min(phase, TIERS.length - 1)];
     answered = true;
     clearTimers(); stopAudio();
 
