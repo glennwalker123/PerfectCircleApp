@@ -219,15 +219,29 @@
     sahouse: ['#FF5CA0', '#36E27B'], hiphop: ['#FFC23C', '#FF5C7A'],
   };
 
-  // Believable but INVENTED sub-genres — at least one appears as a decoy in
-  // every question (kept distinct from the real genres above).
-  const FAKE_GENRES = [
-    'Liquid Step', 'Neon Dub', 'Velvet Bass', 'Chrome Step', 'Static Garage', 'Echo Funk',
-    'Plasma House', 'Crystal Techno', 'Shadow Step', 'Drift House', 'Cobalt Wave', 'Fuzz Pop',
-    'Iron Funk', 'Midnight Garage', 'Ghost Step', 'Mirror Pop', 'Haze Wave', 'Volt Techno',
-    'Onyx Drill', 'Pulse Garage', 'Dusk Soul', 'Frost Bass', 'Ember Trap', 'Slate House',
-    'Glass Funk', 'Halcyon Bass', 'Cinder Punk', 'Tidal Techno',
-  ].filter((f) => ALL_GENRES.indexOf(f) < 0);
+  // Each chapter's broad family. Real decoys are drawn from the SAME family
+  // so they stay believable (no ska-punk turning up in a hip-hop question).
+  const CHAPTER_FAM = {
+    hcc: 'uk', house: 'house', techno: 'house', punk: 'rock', afterpunk: 'rock',
+    metal: 'rock', soundsystem: 'jamaica', carioca: 'latin', westafrica: 'africa',
+    sahouse: 'house', hiphop: 'hiphop',
+  };
+  const FAMILY_GENRES = {};
+  CHAPTERS.forEach((ch) => {
+    const f = CHAPTER_FAM[ch.id];
+    FAMILY_GENRES[f] = FAMILY_GENRES[f] || [];
+    ch.rounds.forEach((r) => { if (FAMILY_GENRES[f].indexOf(r.genre) < 0) FAMILY_GENRES[f].push(r.genre); });
+  });
+  // Believable but INVENTED decoys, matched to each family's style.
+  const FAKES = {
+    uk: ['Liquid Step', 'Chrome Step', 'Ghost Step', 'Shadow Step', 'Pulse Garage', 'Midnight Garage', 'Onyx Drill', 'Frost Bass', 'Halcyon Bass', 'Neon Dub'],
+    house: ['Plasma House', 'Crystal Techno', 'Drift House', 'Volt Techno', 'Tidal Techno', 'Slate House', 'Cobalt Wave', 'Haze Acid'],
+    rock: ['Cinder Punk', 'Fuzz Pop', 'Mirror Pop', 'Static Garage', 'Ash Punk', 'Chrome Wave', 'Velvet Gaze'],
+    jamaica: ['Neon Dub', 'Echo Dub', 'Frost Skank', 'Golden Riddim', 'Haze Dub', 'Liquid Steppa'],
+    latin: ['Neon Perreo', 'Volt Dembow', 'Ember Baile', 'Frost Funk', 'Solar Perreo', 'Pulse Bass'],
+    africa: ['Dusk Soul', 'Iron Funk', 'Echo Highlife', 'Velvet Soul', 'Golden Azonto', 'Solar Pop'],
+    hiphop: ['Ember Trap', 'Onyx Drill', 'Dusk Soul', 'Shadow Rap', 'Cloud Trap', 'Iron Boom', 'Ghost Phonk'],
+  };
 
   const CLIP_MS = 20000;       // each clip plays 20s
   const CLIPS = 3;             // up to 3 clips per round
@@ -495,25 +509,20 @@
     startSequence();
   }
 
-  function pickFake(exclude) {
-    const avail = shuffle(FAKE_GENRES.filter((f) => exclude.indexOf(f) < 0));
-    return avail.length ? avail[0] : 'Neon Step';
+  function pickFake(fam, exclude) {
+    let pool = (FAKES[fam] || []).filter((f) => exclude.indexOf(f) < 0);
+    if (!pool.length) pool = Object.keys(FAKES).reduce((a, k) => a.concat(FAKES[k]), []).filter((f) => exclude.indexOf(f) < 0);
+    return shuffle(pool)[0] || 'Neon Step';
   }
 
   function renderOptions(round, ch) {
     roundGenre = round.genre;
-    const siblings = shuffle(ch.rounds.map((r) => r.genre).filter((g) => g !== round.genre));
-    const outside = shuffle(ALL_GENRES.filter((g) => g !== round.genre && siblings.indexOf(g) < 0));
-
-    // 2 real decoys (one tough sibling + one from the wider pool, for variety)
-    const reals = [];
-    if (siblings.length) reals.push(siblings[0]);
-    for (let i = 0; i < outside.length && reals.length < 2; i++) reals.push(outside[i]);
-    while (reals.length < 2 && siblings.length > reals.length) reals.push(siblings[reals.length]);
-
-    // …plus at least one believable INVENTED genre
-    const fake = pickFake([round.genre].concat(reals));
-    const choices = shuffle([round.genre].concat(reals.slice(0, 2)).concat(fake));
+    const fam = CHAPTER_FAM[ch.id];
+    // 2 real decoys from the SAME family (believable), rotated for variety
+    const reals = shuffle((FAMILY_GENRES[fam] || []).filter((g) => g !== round.genre)).slice(0, 2);
+    // …plus one believable INVENTED genre matched to the family
+    const fake = pickFake(fam, [round.genre].concat(reals));
+    const choices = shuffle([round.genre].concat(reals).concat(fake));
 
     optionsEl.innerHTML = '';
     choices.forEach((g) => {
