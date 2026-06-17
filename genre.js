@@ -252,7 +252,6 @@
   const chIntro = document.getElementById('chIntro');
   const clipTag = document.getElementById('clipTag');
   const pbFill = document.getElementById('pbFill');
-  const pbHint = document.getElementById('pbHint');
   const playStateEl = document.getElementById('playState');
   const eqEl = document.getElementById('eq');
   const optionsEl = document.getElementById('options');
@@ -403,7 +402,6 @@
     void pbFill.offsetWidth;
     pbFill.style.transition = 'width ' + windowMs + 'ms linear';
     pbFill.style.width = '100%';
-    pbHint.textContent = '4 options · answer early for more points';
 
     playClip(0);
     // advance clips
@@ -411,8 +409,8 @@
       timers.push(setTimeout(() => { if (!answered) playClip(i); }, i * CLIP_MS));
     }
     // option removals at each third of the bar (1/3 and 2/3)
-    timers.push(setTimeout(() => { if (answered) return; phase = 1; removeOneOption(); pbHint.textContent = '3 options left'; }, windowMs / 3));
-    timers.push(setTimeout(() => { if (answered) return; phase = 2; removeOneOption(); pbHint.textContent = '2 options left'; }, (windowMs * 2) / 3));
+    timers.push(setTimeout(() => { if (answered) return; phase = 1; removeOneOption(); }, windowMs / 3));
+    timers.push(setTimeout(() => { if (answered) return; phase = 2; removeOneOption(); }, (windowMs * 2) / 3));
     // end of clips
     timers.push(setTimeout(() => { if (!answered) { stopAudio(); playStateEl.textContent = 'Make your guess'; } }, windowMs));
   }
@@ -541,8 +539,7 @@
       streak = 0; updateFooter();
       setTimeout(() => showReveal(round, false, 0), 700);
     } else {
-      // First strike — remove that option and let them try again.
-      pbHint.textContent = 'Wrong — try again';
+      // First strike — cross it out and let them try again.
       setTimeout(() => { btn.classList.add('eliminated'); }, 320);
     }
   }
