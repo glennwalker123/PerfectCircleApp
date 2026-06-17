@@ -189,18 +189,36 @@
     });
   });
 
-  // Chronological journey order (ancestors naturally precede descendants by era)
+  // Layout order: era-sorted (used to pack the map lanes left-to-right).
   const ORDER = NODES.slice().sort((a, b) => a.era - b.era);
 
+  // Play order: work through one super-genre at a time, oldest chapters first.
+  // (Clusters ordered by the era of their earliest sub-genre.)
+  const ROUND_ORDER = ['bluenote', 'rock', 'jamaica', 'edm', 'hiphop'];
+  const CHAPTER_INFO = {
+    bluenote: 'The roots. Blues, jazz and the Black American sound that everything else grew out of.',
+    rock:     'Amplified rebellion — rock ’n’ roll splitting into rock, punk and metal.',
+    jamaica:  'Island science — ska and reggae, and the studio magic of dub.',
+    edm:      'Machine music — disco’s pulse reborn as house, techno and the UK rave continuum.',
+    hiphop:   'The break — turntables, sampling and rap, from the Bronx to global pop.',
+  };
+  const SEQUENCE = [];
+  ROUND_ORDER.forEach((cid) => {
+    NODES.filter((n) => n.cluster === cid).sort((a, b) => a.era - b.era)
+      .forEach((n) => SEQUENCE.push(n));
+  });
+
+  function isFirstOfChapter(i) { return i === 0 || SEQUENCE[i].cluster !== SEQUENCE[i - 1].cluster; }
+  function chapterNumber(cid) { return ROUND_ORDER.indexOf(cid) + 1; }
+
   const TOTAL = NODES.length;
-  const INTRO_MS = 6000;
+  const INTRO_MS = 12000;          // play time (doubled from the first cut)
   const MAX_REROLLS = 6;
   const FETCH_TIMEOUT = 7000;
 
   // ====================================================================
   //  DOM
   // ====================================================================
-  const hintEl = document.getElementById('hint');
   const legendEl = document.getElementById('legend');
   const mapWrap = document.getElementById('mapWrap');
   const svg = document.getElementById('map');
@@ -208,12 +226,18 @@
 
   const views = {
     start: document.getElementById('hudStart'),
+    chapter: document.getElementById('hudChapter'),
     loading: document.getElementById('hudLoading'),
     error: document.getElementById('hudError'),
     round: document.getElementById('hudRound'),
     reveal: document.getElementById('hudReveal'),
     end: document.getElementById('hudEnd'),
   };
+  const chapterKicker = document.getElementById('chapterKicker');
+  const chapterTitle = document.getElementById('chapterTitle');
+  const chapterText = document.getElementById('chapterText');
+  const chapterBeginBtn = document.getElementById('chapterBeginBtn');
+  const anotherBtn = document.getElementById('anotherBtn');
   const startBtn = document.getElementById('startBtn');
   const retryBtn = document.getElementById('retryBtn');
   const replayBtn = document.getElementById('replayBtn');
@@ -250,8 +274,9 @@
   let audioCtx = null;
   let introTimer = null;
   let infoMode = false;           // reveal card opened by tapping a map node
-  let prevView = 'start';
   let activeView = 'start';
+  let roundPool = null;           // shuffled tracks for the current node
+  let usedIdx = -1;               // index into roundPool of the last-resolved track
 
   totalEl.textContent = TOTAL;
   bestEl.textContent = best;
@@ -260,10 +285,10 @@
   //  Map layout + rendering (inline SVG, horizontally scrollable timeline)
   // ====================================================================
   const SVGNS = 'http://www.w3.org/2000/svg';
-  const YEAR0 = 1900, YEAR1 = 2022;
-  const PX_PER_YEAR = 16;
-  const MARGIN_L = 74, MARGIN_R = 70, TOP_PAD = 14;
-  const ROW_HEADER = 22, ROW_OFF = 40, LANE_PAD = 14, NODE_W = 92, NODE_H = 26, MIN_GAP = 100;
+  const YEAR0 = 1900, YEAR1 = 2024;
+  const PX_PER_YEAR = 26;
+  const MARGIN_L = 96, MARGIN_R = 96, TOP_PAD = 18;
+  const ROW_HEADER = 28, ROW_OFF = 58, LANE_PAD = 22, NODE_W = 128, NODE_H = 38, MIN_GAP = 168;
 
   let MAP_W = MARGIN_L + (YEAR1 - YEAR0) * PX_PER_YEAR + MARGIN_R;
   let MAP_H = 0;
@@ -349,22 +374,28 @@
     const g = el('g', { class: 'map-node locked', transform: 'translate(' + n._x + ',' + n._y + ')' });
     const color = CLUSTER_COLOR[n.cluster];
 
-    const ring = el('circle', { class: 'ring', cx: 0, cy: 0, r: 16,
-      fill: 'none', stroke: color, 'stroke-width': '2', opacity: '0' });
+    // pulsing ring (current node)
+    const ring = el('circle', { class: 'ring', cx: 0, cy: 0, r: 22,
+      fill: 'none', stroke: color, 'stroke-width': '3', opacity: '0' });
     g.appendChild(ring);
 
-    // locked dot
-    const dot = el('circle', { class: 'dot', cx: 0, cy: 0, r: 7,
-      fill: 'rgba(255,255,255,0.12)', stroke: 'rgba(255,255,255,0.25)', 'stroke-width': '1.5' });
+    // locked / current marker
+    const dot = el('circle', { class: 'dot', cx: 0, cy: 0, r: 10,
+      fill: hexA(color, 0.18), stroke: color, 'stroke-width': '2' });
     g.appendChild(dot);
+    const q = el('text', { class: 'qmark', x: 0, y: 1, 'text-anchor': 'middle', 'dominant-baseline': 'middle',
+      'font-size': '13', 'font-weight': '800', fill: color, opacity: '0' });
+    q.textContent = '?';
+    g.appendChild(q);
 
-    // pill (shown when lit)
+    // bold solid pill (shown when lit)
     const pillG = el('g', { class: 'label pop' });
-    const w = Math.max(NODE_W, n.label.length * 7.5 + 22);
+    const w = Math.max(NODE_W, n.label.length * 8.6 + 30);
     const rect = el('rect', { class: 'pill', x: -w / 2, y: -NODE_H / 2, width: w, height: NODE_H,
-      rx: 15, fill: hexA(color, 0.22), stroke: color, 'stroke-width': '1.5' });
+      rx: NODE_H / 2, fill: color });
     pillG.appendChild(rect);
-    const label = el('text', { x: 0, y: 1, 'text-anchor': 'middle', 'dominant-baseline': 'middle', 'font-size': '11.5' });
+    const label = el('text', { x: 0, y: 1, 'text-anchor': 'middle', 'dominant-baseline': 'middle',
+      'font-size': '13.5', 'font-weight': '700', fill: '#0a0a12' });
     label.textContent = n.label;
     pillG.appendChild(label);
     pillG.setAttribute('opacity', '0');
@@ -373,7 +404,7 @@
     g.addEventListener('click', () => { if (lit.has(n.id)) showReveal(n, true); });
 
     nodeLayer.appendChild(g);
-    nodeEls[n.id] = { g, ring, dot, pillG };
+    nodeEls[n.id] = { g, ring, dot, q, pillG };
   }
 
   function hexA(hex, a) {
@@ -386,16 +417,10 @@
     const ne = nodeEls[id];
     if (!ne) return;
     ne.g.setAttribute('class', 'map-node ' + state);
-    if (state === 'lit') {
-      ne.pillG.setAttribute('opacity', '1');
-      ne.dot.setAttribute('opacity', '0');
-    } else if (state === 'current') {
-      ne.pillG.setAttribute('opacity', '0');
-      ne.dot.setAttribute('opacity', '1');
-    } else {
-      ne.pillG.setAttribute('opacity', '0');
-      ne.dot.setAttribute('opacity', '1');
-    }
+    const litState = state === 'lit';
+    ne.pillG.setAttribute('opacity', litState ? '1' : '0');
+    ne.dot.setAttribute('opacity', litState ? '0' : '1');
+    ne.q.setAttribute('opacity', state === 'current' ? '1' : '0');
   }
 
   function redrawArrows() {
@@ -515,41 +540,65 @@
     return a;
   }
 
+  // Resolve the first track in `pool` from index `fromIdx` that has a preview.
+  async function resolvePreview(pool, fromIdx) {
+    for (let i = fromIdx; i < pool.length && i < fromIdx + MAX_REROLLS; i++) {
+      try {
+        const data = await jsonpSearch(pool[i].artist + ' ' + pool[i].title);
+        const hit = (data.results || []).find((r) => r.previewUrl);
+        if (hit) return { meta: hit, idx: i };
+      } catch (e) { /* try next track */ }
+    }
+    return null;
+  }
+
   async function loadRound() {
     if (currentIndex >= TOTAL) { showEnd(); return; }
     answered = false;
     show('loading');
-    const node = ORDER[currentIndex];
+    const node = SEQUENCE[currentIndex];
 
     // highlight current node on the map
     NODES.forEach((n) => { if (!lit.has(n.id)) setNodeState(n.id, 'locked'); });
     setNodeState(node.id, 'current');
     centerOn(node);
 
-    let meta = null;
-    const candidates = shuffle(node.tracks);
-    for (let i = 0; i < Math.min(MAX_REROLLS, candidates.length); i++) {
-      const t = candidates[i];
-      try {
-        const data = await jsonpSearch(t.artist + ' ' + t.title);
-        const hit = (data.results || []).find((r) => r.previewUrl);
-        if (hit) { meta = hit; break; }
-      } catch (e) { /* try next track */ }
-    }
-
-    if (!meta) {
+    roundPool = shuffle(node.tracks);
+    const first = await resolvePreview(roundPool, 0);
+    if (!first) {
       errorText.textContent = 'Couldn’t load a track for ' + node.label + '. Check your connection.';
       show('error');
       return;
     }
 
-    currentMeta = meta;
-    player.src = meta.previewUrl;
+    usedIdx = first.idx;
+    currentMeta = first.meta;
+    player.src = first.meta.previewUrl;
+
+    anotherBtn.disabled = false;
+    anotherBtn.hidden = roundPool.length < 2;
+    anotherBtn.textContent = 'Hear another track';
+
     renderOptions(node);
-    hintEl.textContent = 'What sub-genre is this?';
     show('round');
     playStateEl.textContent = 'Playing intro…';
     playIntro();
+  }
+
+  async function playAnotherTrack() {
+    if (!roundPool) return;
+    anotherBtn.disabled = true;
+    anotherBtn.textContent = 'Loading…';
+    const next = await resolvePreview(roundPool, usedIdx + 1);
+    if (next) {
+      usedIdx = next.idx;
+      currentMeta = next.meta;
+      player.src = next.meta.previewUrl;
+      playIntro();
+    }
+    const more = roundPool.length - 1 - usedIdx > 0;
+    anotherBtn.disabled = !more;
+    anotherBtn.textContent = more ? 'Hear another track' : 'No more tracks';
   }
 
   function renderOptions(node) {
@@ -576,6 +625,7 @@
     if (answered) return;
     answered = true;
     stopIntro();
+    anotherBtn.disabled = true;
 
     const correct = choice.id === node.id;
     Array.from(optionsEl.querySelectorAll('.option')).forEach((b) => {
@@ -645,15 +695,31 @@
   function advance() {
     currentIndex += 1;
     if (currentIndex > progress) { progress = currentIndex; localStorage.setItem('gg_progress', String(progress)); }
-    if (currentIndex >= TOTAL) showEnd();
+    enterCurrent();
+  }
+
+  // Move into the node at currentIndex — opening a chapter card at boundaries.
+  function enterCurrent() {
+    if (currentIndex >= TOTAL) { showEnd(); return; }
+    if (isFirstOfChapter(currentIndex)) showChapterIntro(SEQUENCE[currentIndex].cluster);
     else loadRound();
+  }
+
+  function showChapterIntro(cid) {
+    const cl = CLUSTERS.find((c) => c.id === cid);
+    chapterKicker.textContent = 'Chapter ' + chapterNumber(cid) + ' of ' + ROUND_ORDER.length;
+    chapterTitle.textContent = cl.label;
+    chapterTitle.style.color = cl.color;
+    chapterText.textContent = CHAPTER_INFO[cid] || '';
+    show('chapter');
+    const first = SEQUENCE[currentIndex];
+    if (first) centerOn(first);
   }
 
   function showEnd() {
     const endText = document.getElementById('endText');
     endText.innerHTML = 'You traced <b>' + TOTAL + '</b> sub-genres across 120 years of music — ' +
       'from the Delta blues to UK drill. Best streak: <b>' + best + '</b>.';
-    hintEl.textContent = 'The family tree, complete';
     NODES.forEach((n) => { lit.add(n.id); setNodeState(n.id, 'lit'); });
     redrawArrows();
     discoveredEl.textContent = lit.size;
@@ -687,29 +753,31 @@
 
   function restoreProgress() {
     // Re-light everything completed in a previous session.
-    for (let i = 0; i < Math.min(progress, TOTAL); i++) lit.add(ORDER[i].id);
+    for (let i = 0; i < Math.min(progress, TOTAL); i++) lit.add(SEQUENCE[i].id);
     lit.forEach((id) => setNodeState(id, 'lit'));
     redrawArrows();
     discoveredEl.textContent = lit.size;
     currentIndex = Math.min(progress, TOTAL);
   }
 
-  startBtn.addEventListener('click', () => { ensureAudioCtx(); loadRound(); });
+  startBtn.addEventListener('click', () => { ensureAudioCtx(); enterCurrent(); });
+  chapterBeginBtn.addEventListener('click', () => { ensureAudioCtx(); loadRound(); });
   retryBtn.addEventListener('click', () => { ensureAudioCtx(); loadRound(); });
+  anotherBtn.addEventListener('click', () => { ensureAudioCtx(); playAnotherTrack(); });
   nextBtn.addEventListener('click', () => {
     ensureAudioCtx();
     if (infoMode) {
       // Return from a tapped-node info card to wherever the journey actually is.
       infoMode = false;
       if (currentIndex >= TOTAL) show('end');
-      else if (answered) showReveal(ORDER[currentIndex], false);
+      else if (answered) showReveal(SEQUENCE[currentIndex], false);
       else show('round');
       return;
     }
     advance();
   });
   replayBtn.addEventListener('click', () => { ensureAudioCtx(); playIntro(); });
-  replayJourneyBtn.addEventListener('click', () => { ensureAudioCtx(); resetJourney(); loadRound(); });
+  replayJourneyBtn.addEventListener('click', () => { ensureAudioCtx(); resetJourney(); enterCurrent(); });
 
   player.addEventListener('playing', () => eqEl.classList.remove('paused'));
   player.addEventListener('pause', () => eqEl.classList.add('paused'));
@@ -724,7 +792,6 @@
     showEnd();
   } else {
     if (progress > 0) {
-      hintEl.textContent = 'Welcome back — continue the journey';
       const startText = views.start.querySelector('.panel-text');
       if (startText) startText.textContent = 'You’ve discovered ' + progress + ' of ' + TOTAL + ' sub-genres. Pick up where you left off.';
       startBtn.textContent = 'Continue';

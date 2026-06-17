@@ -5,18 +5,20 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="mobile-web-app-capable" content="yes" />
-<meta name="theme-color" content="#0b1020" />
+<meta name="theme-color" content="#08080f" />
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
 <meta http-equiv="Pragma" content="no-cache" />
 <meta http-equiv="Expires" content="0" />
-<title>Roots — The Family Tree of Music</title>
-<link rel="stylesheet" href="genre.css?v=2" />
+<title>ROOTS — The Family Tree of Music</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="genre.css?v=3" />
 </head>
 <body>
   <div class="app">
     <header class="topbar">
-      <h1>Roots</h1>
-      <p class="hint" id="hint">Trace the family tree of music</p>
+      <h1>ROOTS</h1>
       <div class="legend" id="legend"></div>
     </header>
 
@@ -29,7 +31,15 @@
         <!-- Start -->
         <div class="hud-view" id="hudStart">
           <p class="panel-text">Hear a track, name the sub-genre, and watch the family tree of music grow — from the Delta blues to UK drill.</p>
-          <button class="btn" id="startBtn">Start the journey</button>
+          <button class="btn btn-big" id="startBtn">Start</button>
+        </div>
+
+        <!-- Chapter intro -->
+        <div class="hud-view" id="hudChapter" hidden>
+          <span class="kicker" id="chapterKicker">Chapter 1 of 5</span>
+          <h2 class="chapter-title" id="chapterTitle">Blue Note</h2>
+          <p class="panel-text" id="chapterText"></p>
+          <button class="btn btn-big" id="chapterBeginBtn">Begin chapter</button>
         </div>
 
         <!-- Loading -->
@@ -52,6 +62,7 @@
             <button class="icon-btn" id="replayBtn" title="Replay intro">↺</button>
           </div>
           <div class="options" id="options"></div>
+          <button class="btn btn-ghost btn-another" id="anotherBtn" hidden>Hear another track</button>
         </div>
 
         <!-- Reveal -->
@@ -64,14 +75,14 @@
           <div class="reveal-track" id="revealTrack"></div>
           <p class="reveal-blurb" id="revealBlurb"></p>
           <div class="reveal-links" id="revealLinks"></div>
-          <button class="btn" id="nextBtn">Next →</button>
+          <button class="btn btn-big" id="nextBtn">Next</button>
         </div>
 
         <!-- End -->
         <div class="hud-view" id="hudEnd" hidden>
           <div class="big-emoji">🎶</div>
           <p class="panel-text" id="endText"></p>
-          <button class="btn" id="replayJourneyBtn">Play again</button>
+          <button class="btn btn-big" id="replayJourneyBtn">Play again</button>
         </div>
       </div>
     </div>
@@ -87,6 +98,6 @@
   </div>
 
   <audio id="player" preload="auto"></audio>
-  <script src="genre.js?v=2"></script>
+  <script src="genre.js?v=3"></script>
 </body>
 </html>
