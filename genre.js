@@ -10,6 +10,7 @@
     { id: 'jamaica',  label: 'Jamaica',   color: '#3fb37f' },
     { id: 'hiphop',   label: 'Hip-Hop',   color: '#ff9f4f' },
     { id: 'edm',      label: 'Electronic',color: '#ff6b7a' },
+    { id: 'global',   label: 'Global',    color: '#a06bff' },
   ];
   const CLUSTER_COLOR = {};
   CLUSTERS.forEach((c) => { CLUSTER_COLOR[c.id] = c.color; });
@@ -178,6 +179,94 @@
       influencedBy: ['grime', 'usdrill'],
       blurb: 'London took Chicago drill’s menace, swapped in sliding 808s and grime’s cadence, and made it the defining UK street sound of the late 2010s.',
       tracks: [ { title: 'Know Better', artist: 'Headie One' }, { title: 'No Hook', artist: 'Digga D' }, { title: 'Day in the Life', artist: 'Central Cee' } ] },
+
+    // ---- Rock cluster — niche / alternative branches ----
+    { id: 'newwave', label: 'New Wave', cluster: 'rock', era: 1978, scene: 'UK & USA',
+      influencedBy: ['punk'],
+      blurb: 'Punk’s energy channelled into art-school hooks, synths and style — quirky, danceable and built for radio.',
+      tracks: [ { title: 'Once in a Lifetime', artist: 'Talking Heads' }, { title: 'Heart of Glass', artist: 'Blondie' }, { title: 'Whip It', artist: 'Devo' } ] },
+
+    { id: 'postpunk', label: 'Post-Punk', cluster: 'rock', era: 1979, scene: 'UK',
+      influencedBy: ['punk'],
+      blurb: 'Punk turned inward and experimental — angular guitars, dub-deep basslines and cold, searching atmospheres.',
+      tracks: [ { title: 'Love Will Tear Us Apart', artist: 'Joy Division' }, { title: 'Damaged Goods', artist: 'Gang of Four' }, { title: 'Hong Kong Garden', artist: 'Siouxsie and the Banshees' } ] },
+
+    { id: 'hardcorepunk', label: 'Hardcore Punk', cluster: 'rock', era: 1981, scene: 'USA',
+      influencedBy: ['punk'],
+      blurb: 'Punk taken to its limit — faster, harder, shorter — and forged into a fiercely independent DIY scene.',
+      tracks: [ { title: 'Rise Above', artist: 'Black Flag' }, { title: 'Pay to Cum', artist: 'Bad Brains' }, { title: 'Minor Threat', artist: 'Minor Threat' } ] },
+
+    { id: 'emo', label: 'Emo', cluster: 'rock', era: 1985, scene: 'Washington, D.C.',
+      influencedBy: ['hardcorepunk'],
+      blurb: 'Hardcore’s aggression turned confessional — "emotional hardcore" trading slogans for raw, personal catharsis.',
+      tracks: [ { title: 'Seven', artist: 'Sunny Day Real Estate' }, { title: 'Accident Prone', artist: 'Jawbreaker' }, { title: 'For Want Of', artist: 'Rites of Spring' } ] },
+
+    { id: 'grunge', label: 'Grunge', cluster: 'rock', era: 1989, scene: 'Seattle, USA',
+      influencedBy: ['punk', 'metal'],
+      blurb: 'Punk attitude, metal weight and pop melody fused in the Pacific Northwest — loud-quiet-loud and flannel-clad.',
+      tracks: [ { title: 'Smells Like Teen Spirit', artist: 'Nirvana' }, { title: 'Alive', artist: 'Pearl Jam' }, { title: 'Black Hole Sun', artist: 'Soundgarden' }, { title: 'Would?', artist: 'Alice in Chains' } ] },
+
+    { id: 'shoegaze', label: 'Shoegaze', cluster: 'rock', era: 1990, scene: 'UK',
+      influencedBy: ['postpunk', 'newwave'],
+      blurb: 'Walls of blurred, effect-drenched guitar over dreamy melodies — overwhelming and gorgeous, eyes on the pedals.',
+      tracks: [ { title: 'Only Shallow', artist: 'My Bloody Valentine' }, { title: 'Alison', artist: 'Slowdive' }, { title: 'Vapour Trail', artist: 'Ride' } ] },
+
+    { id: 'poppunk', label: 'Pop-Punk', cluster: 'rock', era: 1994, scene: 'California, USA',
+      influencedBy: ['punk'],
+      blurb: 'Punk’s three chords made bright, fast and catchy — bratty hooks built for radio and skateparks.',
+      tracks: [ { title: 'Basket Case', artist: 'Green Day' }, { title: 'All the Small Things', artist: 'blink-182' }, { title: 'Self Esteem', artist: 'The Offspring' } ] },
+
+    { id: 'skapunk', label: 'Ska Punk', cluster: 'rock', era: 1995, scene: 'California, USA',
+      influencedBy: ['hardcorepunk', 'ska'],
+      blurb: 'Jamaican ska’s offbeat skank welded to American punk speed and blaring horns — rowdy, sunny and fast.',
+      tracks: [ { title: 'Santeria', artist: 'Sublime' }, { title: 'Sell Out', artist: 'Reel Big Fish' }, { title: 'The Impression That I Get', artist: 'The Mighty Mighty Bosstones' } ] },
+
+    { id: 'numetal', label: 'Nu Metal', cluster: 'rock', era: 1996, scene: 'USA',
+      influencedBy: ['metal', 'boombap', 'grunge'],
+      blurb: 'Down-tuned metal riffs fused with hip-hop rhythm and rapped vocals — angsty, bouncy and inescapable around 2000.',
+      tracks: [ { title: 'Freak on a Leash', artist: 'Korn' }, { title: 'One Step Closer', artist: 'Linkin Park' }, { title: 'Chop Suey!', artist: 'System of a Down' }, { title: 'Break Stuff', artist: 'Limp Bizkit' } ] },
+
+    // ---- Electronic — niche offshoots ----
+    { id: 'triphop', label: 'Trip-Hop', cluster: 'edm', era: 1994, scene: 'Bristol, UK',
+      influencedBy: ['dub', 'boombap'],
+      blurb: 'Hip-hop slowed to a smoky crawl with dub bass and cinematic gloom — the Bristol sound.',
+      tracks: [ { title: 'Teardrop', artist: 'Massive Attack' }, { title: 'Glory Box', artist: 'Portishead' }, { title: 'Hell Is Round the Corner', artist: 'Tricky' } ] },
+
+    { id: 'dubstep', label: 'Dubstep', cluster: 'edm', era: 2006, scene: 'South London, UK',
+      influencedBy: ['ukgarage', 'dnb'],
+      blurb: 'Garage’s skip stripped to half-time, with sub-bass wobble and cavernous space — then it exploded worldwide.',
+      tracks: [ { title: 'Midnight Request Line', artist: 'Skream' }, { title: 'Archangel', artist: 'Burial' }, { title: 'Scary Monsters and Nice Sprites', artist: 'Skrillex' } ] },
+
+    // ---- Global — cross-pollinated international genres ----
+    { id: 'afrobeat', label: 'Afrobeat', cluster: 'global', era: 1971, scene: 'Lagos, Nigeria',
+      influencedBy: ['funk', 'jazz'],
+      blurb: 'Fela Kuti’s fusion of Yoruba rhythm, highlife horns, funk and jazz into sprawling, political grooves.',
+      tracks: [ { title: 'Water No Get Enemy', artist: 'Fela Kuti' }, { title: 'Zombie', artist: 'Fela Kuti' }, { title: 'Secret Agent', artist: 'Tony Allen' } ] },
+
+    { id: 'bailefunk', label: 'Baile Funk', cluster: 'global', era: 1989, scene: 'Rio de Janeiro, Brazil',
+      influencedBy: ['oldschool'],
+      blurb: 'Rio’s favela party music — Miami-bass beats and chanted vocals, raw, fast and relentless.',
+      tracks: [ { title: 'Bum Bum Tam Tam', artist: 'MC Fioti' }, { title: 'Vai Malandra', artist: 'Anitta' }, { title: 'Olha a Explosão', artist: 'MC Kevinho' } ] },
+
+    { id: 'reggaeton', label: 'Reggaeton', cluster: 'global', era: 1994, scene: 'Puerto Rico & Panama',
+      influencedBy: ['dancehall', 'boombap'],
+      blurb: 'Jamaican dancehall’s dembow riddim crossed with rap in Spanish — the heartbeat of modern Latin pop.',
+      tracks: [ { title: 'Gasolina', artist: 'Daddy Yankee' }, { title: 'Danza Kuduro', artist: 'Don Omar' }, { title: 'Rakata', artist: 'Wisin & Yandel' } ] },
+
+    { id: 'kwaito', label: 'Kwaito', cluster: 'global', era: 1994, scene: 'Johannesburg, South Africa',
+      influencedBy: ['house'],
+      blurb: 'Post-apartheid South African house — slowed down, deepened and toasted over in township slang.',
+      tracks: [ { title: 'Nkalakatha', artist: 'Mandoza' }, { title: 'It\'s About Time', artist: 'Boom Shaka' }, { title: 'Shibobo', artist: 'TKZee' } ] },
+
+    { id: 'afrobeats', label: 'Afrobeats', cluster: 'global', era: 2010, scene: 'Lagos & Accra',
+      influencedBy: ['afrobeat', 'dancehall', 'boombap'],
+      blurb: 'West Africa’s slick modern pop — afrobeat’s descendant blended with dancehall, R&B and hip-hop for the global charts.',
+      tracks: [ { title: 'Essence', artist: 'Wizkid' }, { title: 'Ye', artist: 'Burna Boy' }, { title: 'Fall', artist: 'Davido' } ] },
+
+    { id: 'amapiano', label: 'Amapiano', cluster: 'global', era: 2016, scene: 'South Africa',
+      influencedBy: ['kwaito', 'house'],
+      blurb: 'A South African house mutation built on jazzy keys, deep log-drum basslines and airy space — the global dance sound of the 2020s.',
+      tracks: [ { title: 'Ke Star', artist: 'Focalistic' }, { title: 'Mnike', artist: 'Tyler ICU' }, { title: 'Asibe Happy', artist: 'Kabza De Small' } ] },
   ];
 
   // Index + reverse edges (computed forward influence)
@@ -194,13 +283,14 @@
 
   // Play order: work through one super-genre at a time, oldest chapters first.
   // (Clusters ordered by the era of their earliest sub-genre.)
-  const ROUND_ORDER = ['bluenote', 'rock', 'jamaica', 'edm', 'hiphop'];
+  const ROUND_ORDER = ['bluenote', 'rock', 'jamaica', 'edm', 'hiphop', 'global'];
   const CHAPTER_INFO = {
     bluenote: 'The roots. Blues, jazz and the Black American sound that everything else grew out of.',
-    rock:     'Amplified rebellion — rock ’n’ roll splitting into rock, punk and metal.',
+    rock:     'Amplified rebellion — rock ’n’ roll splitting into punk, metal and every shade of alternative.',
     jamaica:  'Island science — ska and reggae, and the studio magic of dub.',
     edm:      'Machine music — disco’s pulse reborn as house, techno and the UK rave continuum.',
     hiphop:   'The break — turntables, sampling and rap, from the Bronx to global pop.',
+    global:   'Crossing oceans — cross-pollinated sounds from Lagos to Rio to Johannesburg.',
   };
   const SEQUENCE = [];
   ROUND_ORDER.forEach((cid) => {
