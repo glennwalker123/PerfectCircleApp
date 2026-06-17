@@ -2,219 +2,253 @@
   'use strict';
 
   // ====================================================================
-  //  Content — themed chapters. Each chapter is a scene/lineage; each
-  //  round inside it is a niche sub-genre with a couple of example tracks.
-  //  You guess the sub-genre; distractors are drawn from siblings first.
+  //  Content. Every chapter is a CONNECTED LINEAGE — a branch of the
+  //  genre family tree. Every round declares what it descends `from`
+  //  (a real link on the map), and rounds run in lineage order.
+  //  Each round has 3 example tracks that play 20s each, back to back.
   // ====================================================================
   const CHAPTERS = [
     {
       id: 'hcc', title: 'The Hardcore Continuum', scene: 'London · 1991–2020',
-      intro: 'One unbroken thread of British dance music — built on pirate radio, sound systems and sped-up breakbeats, each style mutating into the next.',
-      outro: 'From rave hardcore to drill, the same sub-bass and pirate-radio DNA runs through thirty years of London.',
+      intro: 'One unbroken thread of British dance music — each style mutating directly into the next, born on pirate radio and sound systems.',
+      outro: 'From rave hardcore to drill, every step here grew straight out of the one before it.',
       rounds: [
-        { genre: 'Breakbeat Hardcore', note: 'Early-’90s UK rave: chopped funk breaks, ravey stabs and helium vocals — the big bang of the continuum.',
-          tracks: [ { title: 'Charly', artist: 'The Prodigy' }, { title: 'On a Ragga Tip', artist: 'SL2' } ] },
-        { genre: 'Jungle', note: 'Hardcore’s breakbeats chopped faster and fused with reggae basslines and ragga vocals.',
-          tracks: [ { title: 'Original Nuttah', artist: 'UK Apache & Shy FX' }, { title: 'Incredible', artist: 'M-Beat' } ] },
-        { genre: 'UK Garage', note: 'Smoother, swung 2-step with soulful vocal chops — champagne raves and pirate sets.',
-          tracks: [ { title: 'Re-Rewind (The Crowd Say Bo Selecta)', artist: 'Artful Dodger' }, { title: 'Crazy Love', artist: 'MJ Cole' } ] },
-        { genre: 'Grime', note: 'Garage gone dark and aggressive at 140bpm, with rapid-fire MCs over icy synths.',
-          tracks: [ { title: 'I Luv U', artist: 'Dizzee Rascal' }, { title: 'Eskimo', artist: 'Wiley' } ] },
-        { genre: 'Dubstep', note: 'Half-time, sub-bass wobble and cavernous space carved out of garage’s skip.',
-          tracks: [ { title: 'Midnight Request Line', artist: 'Skream' }, { title: 'Scary Monsters and Nice Sprites', artist: 'Skrillex' } ] },
-        { genre: 'UK Drill', note: 'Sliding 808s and grime cadence over Chicago drill’s menace — late-2010s London.',
-          tracks: [ { title: 'Know Better', artist: 'Headie One' }, { title: 'Day in the Life', artist: 'Central Cee' } ] },
+        { genre: 'Breakbeat Hardcore', from: ['Acid House'], note: 'UK rave sped acid house up and chopped in funk breakbeats and ragga samples.',
+          tracks: [ { t: 'Charly', a: 'The Prodigy' }, { t: 'On a Ragga Tip', a: 'SL2' }, { t: 'Sweet Harmony', a: 'Liquid' } ] },
+        { genre: 'Jungle', from: ['Breakbeat Hardcore', 'Dub'], note: 'Hardcore’s breakbeats chopped faster over deep reggae sub-bass.',
+          tracks: [ { t: 'Original Nuttah', a: 'UK Apache & Shy FX' }, { t: 'Incredible', a: 'M-Beat' }, { t: 'Inner City Life', a: 'Goldie' } ] },
+        { genre: 'UK Garage', from: ['House', 'Jungle'], note: 'Swung, soulful 2-step with chopped vocals and sub-bass.',
+          tracks: [ { t: 'Re-Rewind (The Crowd Say Bo Selecta)', a: 'Artful Dodger' }, { t: 'Crazy Love', a: 'MJ Cole' }, { t: 'Sweet Like Chocolate', a: 'Shanks & Bigfoot' } ] },
+        { genre: 'Grime', from: ['UK Garage'], note: 'Garage gone dark and aggressive at 140bpm, with rapid-fire MCs.',
+          tracks: [ { t: 'I Luv U', a: 'Dizzee Rascal' }, { t: 'Eskimo', a: 'Wiley' }, { t: 'Shutdown', a: 'Skepta' } ] },
+        { genre: 'Dubstep', from: ['UK Garage'], note: 'Garage’s skip stripped to half-time, with sub-bass wobble and space.',
+          tracks: [ { t: 'Midnight Request Line', a: 'Skream' }, { t: 'Archangel', a: 'Burial' }, { t: 'Scary Monsters and Nice Sprites', a: 'Skrillex' } ] },
+        { genre: 'UK Drill', from: ['Grime'], note: 'Grime’s cadence over sliding 808s and Chicago drill’s menace.',
+          tracks: [ { t: 'Know Better', a: 'Headie One' }, { t: 'Day in the Life', a: 'Central Cee' }, { t: 'No Hook', a: 'Digga D' } ] },
       ],
     },
     {
-      id: 'midwest', title: 'Machine Soul', scene: 'Chicago & Detroit · 1985–2010',
-      intro: 'Where dance music was rebuilt from drum machines — the warehouse, the TB-303 and the assembly-line city turned into pure rhythm.',
-      outro: 'House, techno and footwork all came out of these two cities — Black American electronic music that reshaped the planet.',
+      id: 'house', title: 'Four to the Floor', scene: 'Chicago · 1977–2010',
+      intro: 'Disco never died — it was rebuilt on drum machines in Chicago and branched into the deepest, rawest house music.',
+      outro: 'Every style here is a child of disco’s steady 4/4 kick, refracted through Chicago’s clubs.',
       rounds: [
-        { genre: 'Chicago House', note: 'Disco rebuilt on a drum machine at the Warehouse club — the 4/4 pulse that started it all.',
-          tracks: [ { title: 'Your Love', artist: 'Frankie Knuckles' }, { title: 'Move Your Body', artist: 'Marshall Jefferson' } ] },
-        { genre: 'Acid House', note: 'The squelch of the Roland TB-303 turned house psychedelic.',
-          tracks: [ { title: 'Acid Tracks', artist: 'Phuture' }, { title: 'Pacific State', artist: '808 State' } ] },
-        { genre: 'Detroit Techno', note: 'House’s pulse made colder and futurist — robotic machine-funk from the Motor City.',
-          tracks: [ { title: 'Strings of Life', artist: 'Derrick May' }, { title: 'No UFO\'s', artist: 'Model 500' } ] },
-        { genre: 'Ghetto House', note: 'Raw, fast, filthy Chicago house — minimal drum tracks and chanted, X-rated hooks.',
-          tracks: [ { title: 'Percolator', artist: 'Cajmere' }, { title: 'Run', artist: 'DJ Funk' } ] },
-        { genre: 'Footwork', note: 'Chicago’s 160bpm dance-battle music — stuttering, syncopated chopped samples.',
-          tracks: [ { title: 'Feelin\'', artist: 'DJ Rashad' }, { title: 'Baby Come On', artist: 'RP Boo' } ] },
+        { genre: 'Disco', from: ['Funk'], note: 'Funk and soul rebuilt for the dancefloor with a four-on-the-floor kick.',
+          tracks: [ { t: 'Le Freak', a: 'Chic' }, { t: 'I Feel Love', a: 'Donna Summer' }, { t: 'I Will Survive', a: 'Gloria Gaynor' } ] },
+        { genre: 'Chicago House', from: ['Disco'], note: 'Disco rebuilt from a drum machine at the Warehouse club.',
+          tracks: [ { t: 'Your Love', a: 'Frankie Knuckles' }, { t: 'Move Your Body', a: 'Marshall Jefferson' }, { t: 'Jack Your Body', a: 'Steve "Silk" Hurley' } ] },
+        { genre: 'Acid House', from: ['Chicago House'], note: 'The squelch of the Roland TB-303 turned house psychedelic.',
+          tracks: [ { t: 'Acid Tracks', a: 'Phuture' }, { t: 'Pacific State', a: '808 State' }, { t: 'Voodoo Ray', a: 'A Guy Called Gerald' } ] },
+        { genre: 'Ghetto House', from: ['Chicago House'], note: 'Raw, fast, filthy Chicago house — minimal drum tracks and chanted hooks.',
+          tracks: [ { t: 'Percolator', a: 'Cajmere' }, { t: 'Run', a: 'DJ Funk' }, { t: 'Freak Like Me', a: 'DJ Deeon' } ] },
+        { genre: 'Footwork', from: ['Ghetto House'], note: 'Chicago’s 160bpm dance-battle music — stuttering chopped samples.',
+          tracks: [ { t: 'Feelin\'', a: 'DJ Rashad' }, { t: 'Baby Come On', a: 'RP Boo' }, { t: 'Footworkin On Air', a: 'Traxman' } ] },
       ],
     },
     {
-      id: 'sa', title: 'Township Frequencies', scene: 'South Africa · 1994–2022',
-      intro: 'Post-apartheid South Africa built its own electronic lineage — house slowed, deepened and reinvented for the townships.',
-      outro: 'From kwaito to amapiano, South Africa keeps bending imported house into something unmistakably local — and now globally dominant.',
+      id: 'techno', title: 'The Techno Tree', scene: 'Detroit & beyond · 1985–2010',
+      intro: 'Detroit took house’s pulse and made it cold, futurist and purely electronic — then techno splintered into a dozen extremes.',
+      outro: 'Acid, dub, minimal, industrial and gabber are all branches of the same Detroit machine-funk.',
       rounds: [
-        { genre: 'Kwaito', note: 'Post-apartheid house slowed down and toasted over in township slang.',
-          tracks: [ { title: 'Nkalakatha', artist: 'Mandoza' }, { title: 'Shibobo', artist: 'TKZee' } ] },
-        { genre: 'Gqom', note: 'Durban’s dark, broken, minimal house — raw drums and ominous space.',
-          tracks: [ { title: 'Omunye', artist: 'Distruction Boyz' }, { title: 'Ice Drop', artist: 'DJ Lag' } ] },
-        { genre: 'Amapiano', note: 'Jazzy keys, airy pads and deep log-drum basslines — the 2020s global dance sound.',
-          tracks: [ { title: 'Ke Star', artist: 'Focalistic' }, { title: 'Mnike', artist: 'Tyler ICU' } ] },
-        { genre: 'Shangaan Electro', note: 'Limpopo’s hyper-fast (180bpm) marimba-synth dance music.',
-          tracks: [ { title: 'Nwampfundla', artist: 'Tshetsha Boys' }, { title: 'Vomaseven', artist: 'Nozinja' } ] },
+        { genre: 'Detroit Techno', from: ['Chicago House'], note: 'House’s pulse made robotic, sci-fi and machine-driven.',
+          tracks: [ { t: 'Strings of Life', a: 'Derrick May' }, { t: 'No UFO\'s', a: 'Model 500' }, { t: 'The Bells', a: 'Jeff Mills' } ] },
+        { genre: 'Acid Techno', from: ['Detroit Techno', 'Acid House'], note: 'Techno built around the relentless squelch of the 303.',
+          tracks: [ { t: 'Acperience 1', a: 'Hardfloor' }, { t: 'Turkish Bazar', a: 'Emmanuel Top' }, { t: 'Higher State of Consciousness', a: 'Josh Wink' } ] },
+        { genre: 'Dub Techno', from: ['Detroit Techno'], note: 'Techno drowned in echo and reverb — deep, foggy and hypnotic.',
+          tracks: [ { t: 'Phylyps Trak', a: 'Basic Channel' }, { t: 'M-Series', a: 'Maurizio' }, { t: 'Never Tell You', a: 'Rhythm & Sound' } ] },
+        { genre: 'Minimal Techno', from: ['Detroit Techno'], note: 'Techno stripped to its barest clicks, pops and microscopic grooves.',
+          tracks: [ { t: 'Spastik', a: 'Plastikman' }, { t: 'Dexter', a: 'Ricardo Villalobos' }, { t: 'Minus', a: 'Robert Hood' } ] },
+        { genre: 'Industrial Techno', from: ['Detroit Techno'], note: 'Harsh, distorted, pounding techno built for cavernous warehouses.',
+          tracks: [ { t: 'Argon', a: 'Surgeon' }, { t: 'Why They Hide Their Bodies Under My Garage?', a: 'Blawan' }, { t: 'Take Your Body Off', a: 'Perc' } ] },
+        { genre: 'Gabber', from: ['Acid Techno'], note: 'Rotterdam’s extreme hardcore techno — distorted kicks at brutal speed.',
+          tracks: [ { t: 'Poing', a: 'Rotterdam Terror Corps' }, { t: 'Raise Your Fist', a: 'Angerfist' }, { t: 'We Have Arrived', a: 'Mescalinum United' } ] },
       ],
     },
     {
-      id: 'usclub', title: 'Regional Bounce', scene: 'USA · 1986–2015',
-      intro: 'Across American cities, hyper-local club scenes each built their own bass-heavy dance dialect — made for sweaty rooms and block parties.',
-      outro: 'Miami, Baltimore, Jersey and New Orleans never went fully mainstream — but their breakbeats and chants seeded club music everywhere.',
+      id: 'punk', title: 'The Punk Tree', scene: 'USA & UK · 1976–2000',
+      intro: 'Punk handed music back to anyone with three chords — then split into faster, harder and more emotional offshoots.',
+      outro: 'Hardcore, emo, post-hardcore and pop-punk all trace straight back to punk’s year zero.',
       rounds: [
-        { genre: 'Miami Bass', note: 'Booming 808 sub-bass and call-and-response chants — Florida’s electro party sound.',
-          tracks: [ { title: 'Me So Horny', artist: '2 Live Crew' }, { title: 'Drop the Bass', artist: 'DJ Magic Mike' } ] },
-        { genre: 'Baltimore Club', note: 'Breakneck 8-bar house with chopped vocal loops and the Think break.',
-          tracks: [ { title: 'I\'m the Ish', artist: 'DJ Class' }, { title: 'Dance My Pain Away', artist: 'Rod Lee' } ] },
-        { genre: 'Jersey Club', note: 'Baltimore club’s offspring — bed-squeak kicks and chopped, triplet vocal edits.',
-          tracks: [ { title: 'Throw That Ass', artist: 'DJ Sliink' }, { title: 'Body Bag', artist: 'UNIIQU3' } ] },
-        { genre: 'Bounce', note: 'New Orleans’ call-and-response party rap built on the Triggerman beat.',
-          tracks: [ { title: 'Explode', artist: 'Big Freedia' }, { title: 'Back That Thang Up', artist: 'DJ Jubilee' } ] },
-      ],
-    },
-    {
-      id: 'emo', title: 'Loud & Confessional', scene: 'USA · 1985–2008',
-      intro: 'When hardcore punk turned its aggression inward — a family of emotional, intricate and cathartic guitar music.',
-      outro: 'Emo and post-hardcore stayed underground for years before exploding into the pop-punk mainstream of the 2000s.',
-      rounds: [
-        { genre: 'Emo', note: '"Emotional hardcore" from D.C. — raw, personal catharsis over punk dynamics.',
-          tracks: [ { title: 'Seven', artist: 'Sunny Day Real Estate' }, { title: 'For Want Of', artist: 'Rites of Spring' } ] },
-        { genre: 'Midwest Emo', note: 'Twinkly, intricate guitar tapping and unguarded, conversational lyrics.',
-          tracks: [ { title: 'Never Meant', artist: 'American Football' }, { title: 'Little League', artist: 'Cap\'n Jazz' } ] },
-        { genre: 'Post-Hardcore', note: 'Hardcore’s intensity made angular and dynamic — quiet tension into explosive release.',
-          tracks: [ { title: 'Waiting Room', artist: 'Fugazi' }, { title: 'One Armed Scissor', artist: 'At the Drive-In' } ] },
-        { genre: 'Pop-Punk', note: 'Punk’s three chords made bright, fast and catchy — radio-ready and bratty.',
-          tracks: [ { title: 'Basket Case', artist: 'Green Day' }, { title: 'All the Small Things', artist: 'blink-182' } ] },
+        { genre: 'Punk', from: ['Rock'], note: 'Fast, short, three-chord fury that tore up rock’s excess.',
+          tracks: [ { t: 'Blitzkrieg Bop', a: 'Ramones' }, { t: 'Anarchy in the U.K.', a: 'Sex Pistols' }, { t: 'London Calling', a: 'The Clash' } ] },
+        { genre: 'Hardcore Punk', from: ['Punk'], note: 'Punk taken to its limit — faster, harder, shorter, fiercely DIY.',
+          tracks: [ { t: 'Rise Above', a: 'Black Flag' }, { t: 'Pay to Cum', a: 'Bad Brains' }, { t: 'Minor Threat', a: 'Minor Threat' } ] },
+        { genre: 'Post-Hardcore', from: ['Hardcore Punk'], note: 'Hardcore’s intensity made angular and dynamic — tension into release.',
+          tracks: [ { t: 'Waiting Room', a: 'Fugazi' }, { t: 'One Armed Scissor', a: 'At the Drive-In' }, { t: 'New Noise', a: 'Refused' } ] },
+        { genre: 'Emo', from: ['Hardcore Punk'], note: '"Emotional hardcore" — raw, confessional catharsis over punk dynamics.',
+          tracks: [ { t: 'Seven', a: 'Sunny Day Real Estate' }, { t: 'For Want Of', a: 'Rites of Spring' }, { t: 'Never Meant', a: 'American Football' } ] },
+        { genre: 'Pop-Punk', from: ['Punk'], note: 'Punk’s three chords made bright, fast and catchy.',
+          tracks: [ { t: 'Basket Case', a: 'Green Day' }, { t: 'All the Small Things', a: 'blink-182' }, { t: 'Self Esteem', a: 'The Offspring' } ] },
+        { genre: 'Ska Punk', from: ['Hardcore Punk', 'Ska'], note: 'Jamaican ska’s offbeat skank welded to American punk speed and horns.',
+          tracks: [ { t: 'Santeria', a: 'Sublime' }, { t: 'Sell Out', a: 'Reel Big Fish' }, { t: 'The Impression That I Get', a: 'The Mighty Mighty Bosstones' } ] },
       ],
     },
     {
       id: 'afterpunk', title: 'After Punk', scene: 'UK & USA · 1978–1991',
-      intro: 'When punk’s energy fractured into art, atmosphere and synthesizers — the alternative underground that shaped everything indie.',
-      outro: 'Post-punk’s experiments — drum machines, dub bass, gothic gloom and walls of guitar — became the backbone of alternative music.',
+      intro: 'The other branch off punk — turned inward, arty and electronic, building the alternative underground.',
+      outro: 'Goth, synth-pop and shoegaze all flowered from post-punk and new wave.',
       rounds: [
-        { genre: 'Post-Punk', note: 'Punk turned inward and experimental — angular guitars, dub-deep bass and cold, searching atmosphere.',
-          tracks: [ { title: 'Love Will Tear Us Apart', artist: 'Joy Division' }, { title: 'Damaged Goods', artist: 'Gang of Four' } ] },
-        { genre: 'New Wave', note: 'Punk’s energy channelled into art-school hooks, synths and style — quirky, danceable and radio-ready.',
-          tracks: [ { title: 'Once in a Lifetime', artist: 'Talking Heads' }, { title: 'Heart of Glass', artist: 'Blondie' } ] },
-        { genre: 'Goth Rock', note: 'Post-punk gone dark and theatrical — chorused guitars, doom-laden bass and graveyard romance.',
-          tracks: [ { title: 'Bela Lugosi\'s Dead', artist: 'Bauhaus' }, { title: 'This Corrosion', artist: 'The Sisters of Mercy' } ] },
-        { genre: 'Synth-Pop', note: 'New wave with the guitars swapped for synthesizers — sleek, melodic electronic pop.',
-          tracks: [ { title: 'Just Can\'t Get Enough', artist: 'Depeche Mode' }, { title: 'Cars', artist: 'Gary Numan' } ] },
-        { genre: 'Shoegaze', note: 'Walls of blurred, effect-drenched guitar over dreamy melodies — overwhelming and gorgeous, eyes on the pedals.',
-          tracks: [ { title: 'Only Shallow', artist: 'My Bloody Valentine' }, { title: 'Alison', artist: 'Slowdive' } ] },
+        { genre: 'Post-Punk', from: ['Punk'], note: 'Punk turned experimental — angular guitars, dub bass and cold atmosphere.',
+          tracks: [ { t: 'Love Will Tear Us Apart', a: 'Joy Division' }, { t: 'Damaged Goods', a: 'Gang of Four' }, { t: 'Hong Kong Garden', a: 'Siouxsie and the Banshees' } ] },
+        { genre: 'New Wave', from: ['Punk'], note: 'Punk’s energy channelled into art-school hooks, synths and style.',
+          tracks: [ { t: 'Once in a Lifetime', a: 'Talking Heads' }, { t: 'Heart of Glass', a: 'Blondie' }, { t: 'Whip It', a: 'Devo' } ] },
+        { genre: 'Goth Rock', from: ['Post-Punk'], note: 'Post-punk gone dark and theatrical — chorused guitars and graveyard romance.',
+          tracks: [ { t: 'Bela Lugosi\'s Dead', a: 'Bauhaus' }, { t: 'This Corrosion', a: 'The Sisters of Mercy' }, { t: 'A Forest', a: 'The Cure' } ] },
+        { genre: 'Synth-Pop', from: ['New Wave'], note: 'New wave with the guitars swapped for synthesizers — sleek electronic pop.',
+          tracks: [ { t: 'Just Can\'t Get Enough', a: 'Depeche Mode' }, { t: 'Cars', a: 'Gary Numan' }, { t: 'Blue Monday', a: 'New Order' } ] },
+        { genre: 'Shoegaze', from: ['Post-Punk', 'New Wave'], note: 'Walls of blurred, effect-drenched guitar over dreamy melodies.',
+          tracks: [ { t: 'Only Shallow', a: 'My Bloody Valentine' }, { t: 'Alison', a: 'Slowdive' }, { t: 'Vapour Trail', a: 'Ride' } ] },
       ],
     },
     {
       id: 'metal', title: 'The Metal Tree', scene: 'Worldwide · 1980–2005',
-      intro: 'Heavy metal split into a dense thicket of extremes — faster, heavier, darker, each subgenre pushing a different limit.',
-      outro: 'Thrash bred death and black metal; doom slowed it all down; nu metal and metalcore dragged it into the mainstream.',
+      intro: 'Heavy metal split into a dense thicket of extremes — each subgenre pushing a different limit of speed, weight or darkness.',
+      outro: 'Thrash bred death and black metal; doom slowed it down; nu metal and metalcore dragged it back into the charts.',
       rounds: [
-        { genre: 'Thrash Metal', note: 'Punk speed welded to metal riffing — tight, fast, aggressive.',
-          tracks: [ { title: 'Master of Puppets', artist: 'Metallica' }, { title: 'Raining Blood', artist: 'Slayer' } ] },
-        { genre: 'Death Metal', note: 'Guttural growls, blast beats and brutal, downtuned riffing.',
-          tracks: [ { title: 'Pull the Plug', artist: 'Death' }, { title: 'God of Emptiness', artist: 'Morbid Angel' } ] },
-        { genre: 'Black Metal', note: 'Tremolo-picked guitars, shrieked vocals and lo-fi, freezing atmosphere.',
-          tracks: [ { title: 'Freezing Moon', artist: 'Mayhem' }, { title: 'I Am the Black Wizards', artist: 'Emperor' } ] },
-        { genre: 'Doom Metal', note: 'Slow, crushing, blues-heavy riffs and a sense of dread — metal at half speed.',
-          tracks: [ { title: 'Black Sabbath', artist: 'Black Sabbath' }, { title: 'Solitude', artist: 'Candlemass' } ] },
-        { genre: 'Nu Metal', note: 'Downtuned riffs fused with hip-hop rhythm and rapped vocals — turn-of-the-millennium angst.',
-          tracks: [ { title: 'Freak on a Leash', artist: 'Korn' }, { title: 'Chop Suey!', artist: 'System of a Down' } ] },
-        { genre: 'Metalcore', note: 'Hardcore breakdowns spliced with melodic death-metal riffing.',
-          tracks: [ { title: 'My Curse', artist: 'Killswitch Engage' }, { title: 'Nothing Left', artist: 'As I Lay Dying' } ] },
+        { genre: 'Thrash Metal', from: ['Heavy Metal', 'Hardcore Punk'], note: 'Punk speed welded to metal riffing — tight, fast, aggressive.',
+          tracks: [ { t: 'Master of Puppets', a: 'Metallica' }, { t: 'Raining Blood', a: 'Slayer' }, { t: 'Holy Wars... The Punishment Due', a: 'Megadeth' } ] },
+        { genre: 'Death Metal', from: ['Thrash Metal'], note: 'Guttural growls, blast beats and brutal downtuned riffing.',
+          tracks: [ { t: 'Pull the Plug', a: 'Death' }, { t: 'God of Emptiness', a: 'Morbid Angel' }, { t: 'Hammer Smashed Face', a: 'Cannibal Corpse' } ] },
+        { genre: 'Black Metal', from: ['Thrash Metal'], note: 'Tremolo-picked guitars, shrieked vocals and lo-fi, freezing atmosphere.',
+          tracks: [ { t: 'Freezing Moon', a: 'Mayhem' }, { t: 'I Am the Black Wizards', a: 'Emperor' }, { t: 'Transilvanian Hunger', a: 'Darkthrone' } ] },
+        { genre: 'Doom Metal', from: ['Heavy Metal'], note: 'Slow, crushing, blues-heavy riffs and a sense of dread.',
+          tracks: [ { t: 'Black Sabbath', a: 'Black Sabbath' }, { t: 'Solitude', a: 'Candlemass' }, { t: 'Funeralopolis', a: 'Electric Wizard' } ] },
+        { genre: 'Nu Metal', from: ['Heavy Metal', 'Hip-Hop'], note: 'Downtuned riffs fused with hip-hop rhythm and rapped vocals.',
+          tracks: [ { t: 'Freak on a Leash', a: 'Korn' }, { t: 'Chop Suey!', a: 'System of a Down' }, { t: 'One Step Closer', a: 'Linkin Park' } ] },
+        { genre: 'Metalcore', from: ['Hardcore Punk', 'Death Metal'], note: 'Hardcore breakdowns spliced with melodic death-metal riffing.',
+          tracks: [ { t: 'My Curse', a: 'Killswitch Engage' }, { t: 'Nothing Left', a: 'As I Lay Dying' }, { t: 'Pull Harder on the Strings of Your Martyr', a: 'Trivium' } ] },
       ],
     },
     {
-      id: 'internet', title: 'Born Online', scene: 'The Internet · 2009–2022',
-      intro: 'Genres that grew up on the web — built from samples, irony, blown-out speakers and Discord servers more than any one city.',
-      outro: 'Microgenres now form and mutate online in months, not decades — the family tree has gone fully digital.',
+      id: 'soundsystem', title: 'Sound System', scene: 'Jamaica → Latin America · 1962–2010',
+      intro: 'Jamaica invented one lineage that conquered the world — and its dembow riddim eventually became the heartbeat of Latin pop.',
+      outro: 'Ska to reggaeton: one unbroken sound-system bloodline crossing the Caribbean.',
       rounds: [
-        { genre: 'Vaporwave', note: 'Slowed, chopped ’80s muzak and mall ambience — nostalgic, ironic and woozy.',
-          tracks: [ { title: 'リサフランク420 // 現代のコンピュー', artist: 'Macintosh Plus' }, { title: 'Teen Pregnancy', artist: 'Blank Banshee' } ] },
-        { genre: 'Hyperpop', note: 'Pop maximised to cartoonish extremes — pitched vocals, blown-out bass and sugar-rush hooks.',
-          tracks: [ { title: 'money machine', artist: '100 gecs' }, { title: 'Immaterial', artist: 'SOPHIE' } ] },
-        { genre: 'Phonk', note: 'Memphis rap samples, cowbells and distortion — drift-video soundtrack music.',
-          tracks: [ { title: 'Close Eyes', artist: 'DVRST' }, { title: 'Murder in My Mind', artist: 'Kordhell' } ] },
-        { genre: 'Breakcore', note: 'Frantic, chopped amen breaks at extreme tempos — chaos as a genre.',
-          tracks: [ { title: 'Hajnal', artist: 'Venetian Snares' }, { title: 'Come to Daddy', artist: 'Aphex Twin' } ] },
+        { genre: 'Ska', from: ['Rhythm & Blues'], note: 'Jamaica’s first homegrown pop — a skipping offbeat over jumped-up R&B.',
+          tracks: [ { t: 'Guns of Navarone', a: 'The Skatalites' }, { t: 'Israelites', a: 'Desmond Dekker' }, { t: '54-46 Was My Number', a: 'Toots & The Maytals' } ] },
+        { genre: 'Rocksteady', from: ['Ska'], note: 'Ska slowed to a cool, romantic crawl with the bass stepped forward.',
+          tracks: [ { t: 'Get Ready - Rock Steady', a: 'Alton Ellis' }, { t: 'The Tide Is High', a: 'The Paragons' }, { t: 'Everything I Own', a: 'Ken Boothe' } ] },
+        { genre: 'Reggae', from: ['Rocksteady'], note: 'The one-drop rhythm and Rastafari message that went worldwide.',
+          tracks: [ { t: 'Could You Be Loved', a: 'Bob Marley & The Wailers' }, { t: 'The Harder They Come', a: 'Jimmy Cliff' }, { t: 'Pressure Drop', a: 'Toots & The Maytals' } ] },
+        { genre: 'Dub', from: ['Reggae'], note: 'Engineers remixed reggae into echo-drenched, bass-heavy instrumentals.',
+          tracks: [ { t: 'King Tubby Meets Rockers Uptown', a: 'Augustus Pablo' }, { t: 'Blackboard Jungle Dub', a: 'Lee "Scratch" Perry' }, { t: 'Dub Fi Gwan', a: 'King Tubby' } ] },
+        { genre: 'Dancehall', from: ['Reggae'], note: 'Reggae went digital and DJ-led — sparse riddims and rapid toasting.',
+          tracks: [ { t: 'Under Mi Sleng Teng', a: 'Wayne Smith' }, { t: 'Mr. Loverman', a: 'Shabba Ranks' }, { t: 'Get Busy', a: 'Sean Paul' } ] },
+        { genre: 'Reggaeton', from: ['Dancehall'], note: 'Dancehall’s dembow riddim crossed with rap in Spanish.',
+          tracks: [ { t: 'Gasolina', a: 'Daddy Yankee' }, { t: 'Danza Kuduro', a: 'Don Omar' }, { t: 'Rakata', a: 'Wisin & Yandel' } ] },
       ],
     },
     {
-      id: 'afro', title: 'Afro Diaspora', scene: 'Africa & beyond · 1971–2020',
-      intro: 'African scenes fusing local rhythm with funk, house and hip-hop — and exporting the results back across the world.',
-      outro: 'From Fela’s afrobeat to today’s afrobeats, West and Central African pop has become one of the dominant sounds on Earth.',
+      id: 'carioca', title: 'Funk Carioca', scene: 'Brazil · 1989–2020',
+      intro: 'Miami bass landed in Rio’s favelas and became its own self-feeding lineage of party music.',
+      outro: 'Every Brazilian funk style here grew directly out of baile funk’s raw template.',
       rounds: [
-        { genre: 'Afrobeat', note: 'Fela Kuti’s fusion of Yoruba rhythm, highlife horns, funk and jazz into long political grooves.',
-          tracks: [ { title: 'Zombie', artist: 'Fela Kuti' }, { title: 'Secret Agent', artist: 'Tony Allen' } ] },
-        { genre: 'Kuduro', note: 'Angola’s frantic, percussive electronic dance music.',
-          tracks: [ { title: 'Kalemba (Wegue Wegue)', artist: 'Buraka Som Sistema' }, { title: 'Windeck', artist: 'Cabo Snoop' } ] },
-        { genre: 'Azonto', note: 'Ghana’s bouncy, danceable hiplife offshoot of the early 2010s.',
-          tracks: [ { title: 'Azonto', artist: 'Fuse ODG' }, { title: 'U Go Kill Me', artist: 'Sarkodie' } ] },
-        { genre: 'Afrobeats', note: 'West Africa’s slick modern pop — afrobeat’s descendant blended with dancehall, R&B and hip-hop.',
-          tracks: [ { title: 'Essence', artist: 'Wizkid' }, { title: 'Ye', artist: 'Burna Boy' } ] },
+        { genre: 'Miami Bass', from: ['Electro'], note: 'Booming 808 sub-bass and call-and-response chants from Florida.',
+          tracks: [ { t: 'Me So Horny', a: '2 Live Crew' }, { t: 'Drop the Bass', a: 'DJ Magic Mike' }, { t: 'Whoot, There It Is', a: '95 South' } ] },
+        { genre: 'Baile Funk', from: ['Miami Bass'], note: 'Rio’s favela party music — Miami-bass beats and chanted vocals.',
+          tracks: [ { t: 'Bum Bum Tam Tam', a: 'MC Fioti' }, { t: 'Olha a Explosão', a: 'MC Kevinho' }, { t: 'Vai Malandra', a: 'Anitta' } ] },
+        { genre: 'Funk Ostentação', from: ['Baile Funk'], note: 'São Paulo’s flashy, luxury-flexing funk over heavy melodic beats.',
+          tracks: [ { t: 'Plaque de 100', a: 'MC Guimê' }, { t: 'Bolha de Sabão', a: 'MC Bin Laden' }, { t: 'País do Futebol', a: 'MC Guimê' } ] },
+        { genre: 'Brega Funk', from: ['Baile Funk'], note: 'Recife’s melodic, brega-tinged take on funk — slower and catchy.',
+          tracks: [ { t: 'Envolvimento', a: 'MC Loma e As Gêmeas Lacração' }, { t: 'Tubarão Te Amo', a: 'Shevchenko e Elloco' }, { t: 'Tá Tranquilo Tá Favorável', a: 'MC Bin Laden' } ] },
       ],
     },
     {
-      id: 'latin', title: 'Baile & Perreo', scene: 'Latin America · 1989–2020',
-      intro: 'From Rio favelas to San Juan and Santo Domingo — bass-heavy street music built for sweaty dancefloors.',
-      outro: 'Reggaeton’s dembow riddim and Brazil’s funk now top charts worldwide — Latin club music become global pop.',
+      id: 'westafrica', title: 'West African Pop', scene: 'Ghana & Nigeria · 1955–2020',
+      intro: 'A single West African pop lineage — colonial brass and jazz reworked again and again into the continent’s modern sound.',
+      outro: 'Highlife to afrobeats: one continuous Ghanaian-Nigerian thread, now topping global charts.',
       rounds: [
-        { genre: 'Reggaeton', note: 'Jamaican dancehall’s dembow riddim crossed with rap in Spanish — the heartbeat of modern Latin pop.',
-          tracks: [ { title: 'Gasolina', artist: 'Daddy Yankee' }, { title: 'Danza Kuduro', artist: 'Don Omar' } ] },
-        { genre: 'Dembow', note: 'Dominican street music built on a relentless, stripped-down dembow loop.',
-          tracks: [ { title: 'Suave', artist: 'El Alfa' }, { title: 'La Mamá de la Mamá', artist: 'El Alfa' } ] },
-        { genre: 'Baile Funk', note: 'Rio’s favela party music — Miami-bass beats and chanted vocals, raw and relentless.',
-          tracks: [ { title: 'Bum Bum Tam Tam', artist: 'MC Fioti' }, { title: 'Olha a Explosão', artist: 'MC Kevinho' } ] },
-        { genre: 'Funk Ostentação', note: 'São Paulo’s flashy funk — luxury-flexing lyrics over heavy, melodic beats.',
-          tracks: [ { title: 'Plaque de 100', artist: 'MC Guimê' }, { title: 'País do Futebol', artist: 'MC Guimê' } ] },
-        { genre: 'Brega Funk', note: 'Recife’s melodic, brega-tinged take on funk — slower, catchy and romantic.',
-          tracks: [ { title: 'Envolvimento', artist: 'MC Loma e As Gêmeas Lacração' }, { title: 'Tubarão Te Amo', artist: 'Shevchenko e Elloco' } ] },
+        { genre: 'Highlife', from: ['Jazz'], note: 'Ghana’s blend of brass-band swing, jazz and local melody.',
+          tracks: [ { t: 'All for You', a: 'E.T. Mensah' }, { t: 'Sunshine Day', a: 'Osibisa' }, { t: 'Yamona', a: 'Pat Thomas' } ] },
+        { genre: 'Afrobeat', from: ['Highlife', 'Funk'], note: 'Fela Kuti’s fusion of highlife horns, Yoruba rhythm, funk and jazz.',
+          tracks: [ { t: 'Zombie', a: 'Fela Kuti' }, { t: 'Water No Get Enemy', a: 'Fela Kuti' }, { t: 'Secret Agent', a: 'Tony Allen' } ] },
+        { genre: 'Hiplife', from: ['Highlife', 'Hip-Hop'], note: 'Highlife crossed with hip-hop — Ghanaian rap over local grooves.',
+          tracks: [ { t: 'Keep Your Eyes on the Road', a: 'Reggie Rockstone' }, { t: 'Ahomka Womu', a: 'VIP' }, { t: 'U Go Kill Me', a: 'Sarkodie' } ] },
+        { genre: 'Azonto', from: ['Hiplife'], note: 'Ghana’s bouncy, danceable hiplife offshoot of the early 2010s.',
+          tracks: [ { t: 'Azonto', a: 'Fuse ODG' }, { t: 'Telemo', a: 'Gasmilla' }, { t: 'Obuu Mo', a: 'E.L' } ] },
+        { genre: 'Afrobeats', from: ['Afrobeat', 'Hiplife', 'Dancehall'], note: 'West Africa’s slick modern pop — blended with dancehall, R&B and hip-hop.',
+          tracks: [ { t: 'Essence', a: 'Wizkid' }, { t: 'Ye', a: 'Burna Boy' }, { t: 'Fall', a: 'Davido' } ] },
+      ],
+    },
+    {
+      id: 'sahouse', title: 'Township House', scene: 'South Africa · 1994–2022',
+      intro: 'South Africa took imported house and kept bending it — one local lineage from kwaito to the world-conquering amapiano.',
+      outro: 'Kwaito, gqom and amapiano are all the same South African house impulse, a generation apart.',
+      rounds: [
+        { genre: 'Kwaito', from: ['House'], note: 'Post-apartheid house slowed down and toasted over in township slang.',
+          tracks: [ { t: 'Nkalakatha', a: 'Mandoza' }, { t: 'Shibobo', a: 'TKZee' }, { t: 'It\'s About Time', a: 'Boom Shaka' } ] },
+        { genre: 'Gqom', from: ['Kwaito', 'House'], note: 'Durban’s dark, broken, minimal house — raw drums and ominous space.',
+          tracks: [ { t: 'Omunye', a: 'Distruction Boyz' }, { t: 'Ice Drop', a: 'DJ Lag' }, { t: 'Wololo', a: 'Babes Wodumo' } ] },
+        { genre: 'Amapiano', from: ['Kwaito', 'House'], note: 'Jazzy keys, airy pads and deep log-drum basslines — the 2020s dance sound.',
+          tracks: [ { t: 'Ke Star', a: 'Focalistic' }, { t: 'Mnike', a: 'Tyler ICU' }, { t: 'Asibe Happy', a: 'Kabza De Small' } ] },
+      ],
+    },
+    {
+      id: 'hiphop', title: 'The Hip-Hop Lineage', scene: 'USA · 1979–2015',
+      intro: 'From Bronx block parties, one rap lineage branched across America — each regional sound feeding the next.',
+      outro: 'Old-school to drill: turntables and sampling reshaped into trap, phonk and beyond.',
+      rounds: [
+        { genre: 'Old-School Hip-Hop', from: ['Funk', 'Disco'], note: 'Bronx DJs looped funk and disco breaks while MCs rhymed over them.',
+          tracks: [ { t: 'Rapper\'s Delight', a: 'The Sugarhill Gang' }, { t: 'The Message', a: 'Grandmaster Flash & The Furious Five' }, { t: 'Planet Rock', a: 'Afrika Bambaataa' } ] },
+        { genre: 'Boom Bap', from: ['Old-School Hip-Hop'], note: 'The golden-age sound: hard dusty drum breaks and jazz/soul samples.',
+          tracks: [ { t: 'N.Y. State of Mind', a: 'Nas' }, { t: 'C.R.E.A.M.', a: 'Wu-Tang Clan' }, { t: 'Juicy', a: 'The Notorious B.I.G.' } ] },
+        { genre: 'Memphis Rap', from: ['Boom Bap'], note: 'Murky, menacing, lo-fi Southern rap — the seedbed of phonk.',
+          tracks: [ { t: 'Tear da Club Up \'97', a: 'Three 6 Mafia' }, { t: 'Chickenhead', a: 'Project Pat' }, { t: 'Meet Yo Maker', a: 'Tommy Wright III' } ] },
+        { genre: 'Trap', from: ['Boom Bap'], note: 'Southern hip-hop on booming 808s, rattling hi-hats and cinematic synths.',
+          tracks: [ { t: 'Rubber Band Man', a: 'T.I.' }, { t: 'Mask Off', a: 'Future' }, { t: 'Bad and Boujee', a: 'Migos' } ] },
+        { genre: 'Phonk', from: ['Memphis Rap'], note: 'Memphis rap samples, cowbells and distortion — drift-video music.',
+          tracks: [ { t: 'Close Eyes', a: 'DVRST' }, { t: 'Murder in My Mind', a: 'Kordhell' }, { t: 'Why Not', a: 'Ghostface Playa' } ] },
+        { genre: 'Drill', from: ['Trap'], note: 'Chicago’s bleak, ominous offshoot of trap — sparse and menacing.',
+          tracks: [ { t: 'Love Sosa', a: 'Chief Keef' }, { t: 'L\'s Anthem', a: 'Lil Durk' }, { t: 'Welcome to the Party', a: 'Pop Smoke' } ] },
       ],
     },
   ];
 
-  // Global pool of every sub-genre label (for distractors).
+  // Normalise tracks ({t,a} -> {title,artist}) and build the genre pool.
   const ALL_GENRES = [];
-  CHAPTERS.forEach((ch) => ch.rounds.forEach((r) => { if (ALL_GENRES.indexOf(r.genre) < 0) ALL_GENRES.push(r.genre); }));
+  CHAPTERS.forEach((ch) => ch.rounds.forEach((r) => {
+    r.tracks = r.tracks.map((x) => ({ title: x.t, artist: x.a }));
+    if (ALL_GENRES.indexOf(r.genre) < 0) ALL_GENRES.push(r.genre);
+  }));
 
-  const INTRO_MS = 12000;
-  const MAX_REROLLS = 6;
+  const CLIP_MS = 20000;       // each clip plays 20s
+  const CLIPS = 3;             // up to 3 clips per round
+  const MAX_POINTS = 1000, MIN_POINTS = 100;
   const FETCH_TIMEOUT = 7000;
 
   // ====================================================================
   //  DOM
   // ====================================================================
   const views = {
-    start: document.getElementById('vStart'),
+    home: document.getElementById('vHome'),
     chapter: document.getElementById('vChapter'),
     loading: document.getElementById('vLoading'),
     error: document.getElementById('vError'),
     round: document.getElementById('vRound'),
     reveal: document.getElementById('vReveal'),
     chapterEnd: document.getElementById('vChapterEnd'),
-    end: document.getElementById('vEnd'),
   };
-  const startBtn = document.getElementById('startBtn');
+  const chapterList = document.getElementById('chapterList');
+  const chBackBtn = document.getElementById('chBackBtn');
   const chBeginBtn = document.getElementById('chBeginBtn');
   const retryBtn = document.getElementById('retryBtn');
   const skipBtn = document.getElementById('skipBtn');
   const replayBtn = document.getElementById('replayBtn');
-  const anotherBtn = document.getElementById('anotherBtn');
   const nextBtn = document.getElementById('nextBtn');
-  const ceNextBtn = document.getElementById('ceNextBtn');
-  const replayAllBtn = document.getElementById('replayAllBtn');
+  const ceBackBtn = document.getElementById('ceBackBtn');
 
   const chKicker = document.getElementById('chKicker');
   const chTitle = document.getElementById('chTitle');
   const chScene = document.getElementById('chScene');
   const chIntro = document.getElementById('chIntro');
-  const roundTag = document.getElementById('roundTag');
+  const clipTag = document.getElementById('clipTag');
+  const pointsEl = document.getElementById('points');
   const playStateEl = document.getElementById('playState');
   const eqEl = document.getElementById('eq');
   const optionsEl = document.getElementById('options');
   const errorText = document.getElementById('errorText');
 
   const verdictEl = document.getElementById('verdict');
+  const revPoints = document.getElementById('revPoints');
   const revName = document.getElementById('revName');
   const revMeta = document.getElementById('revMeta');
   const revTrack = document.getElementById('revTrack');
@@ -223,9 +257,8 @@
   const ceTitle = document.getElementById('ceTitle');
   const ceOutro = document.getElementById('ceOutro');
   const ceScore = document.getElementById('ceScore');
-  const endText = document.getElementById('endText');
 
-  const chapterStat = document.getElementById('chapterStat');
+  const scoreStat = document.getElementById('scoreStat');
   const footerStreak = document.getElementById('footerStreak');
   const bestEl = document.getElementById('bestScore');
   const player = document.getElementById('player');
@@ -235,14 +268,15 @@
   // ====================================================================
   let best = parseInt(localStorage.getItem('rt_best') || '0', 10);
   let streak = 0;
-  let chapterIdx = parseInt(localStorage.getItem('rt_ch') || '0', 10);
-  let roundIdx = parseInt(localStorage.getItem('rt_rd') || '0', 10);
-  let chapterCorrect = 0;
+  let chapterIdx = 0, roundIdx = 0;
+  let chapterScore = 0;
   let answered = false;
   let audioCtx = null;
-  let introTimer = null;
-  let pool = null;       // example tracks for the active round
-  let usedIdx = -1;
+  let clips = [];              // resolved metas for the active round
+  let clipIdx = 0;
+  let roundStart = 0;
+  let timers = [];             // clip-advance timeouts
+  let pointsInterval = null;
   let currentMeta = null;
 
   bestEl.textContent = best;
@@ -255,18 +289,11 @@
     for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
     return a;
   }
-  function escapeHtml(s) {
-    return String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-  }
+  function escapeHtml(s) { return String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
   function show(view) { Object.keys(views).forEach((k) => { views[k].hidden = k !== view; }); }
+  function chBestKey(ch) { return 'rt_best_' + ch.id; }
+  function updateFooter() { scoreStat.textContent = chapterScore; footerStreak.textContent = streak; bestEl.textContent = best; }
 
-  function updateFooter() {
-    chapterStat.textContent = 'Chapter ' + (chapterIdx + 1) + '/' + CHAPTERS.length;
-    footerStreak.textContent = streak;
-    bestEl.textContent = best;
-  }
-
-  // iTunes preview lookup via JSONP (sidesteps the endpoint's CORS).
   function jsonpSearch(term) {
     return new Promise((resolve, reject) => {
       const cb = 'itunescb_' + Math.random().toString(36).slice(2);
@@ -280,16 +307,12 @@
       document.body.appendChild(script);
     });
   }
-
-  async function resolvePreview(list, fromIdx) {
-    for (let i = fromIdx; i < list.length && i < fromIdx + MAX_REROLLS; i++) {
-      try {
-        const data = await jsonpSearch(list[i].artist + ' ' + list[i].title);
-        const hit = (data.results || []).find((r) => r.previewUrl);
-        if (hit) return { meta: hit, idx: i };
-      } catch (e) { /* next */ }
-    }
-    return null;
+  async function resolveOne(track) {
+    try {
+      const data = await jsonpSearch(track.artist + ' ' + track.title);
+      const hit = (data.results || []).find((r) => r.previewUrl);
+      return hit || null;
+    } catch (e) { return null; }
   }
 
   // ====================================================================
@@ -300,64 +323,98 @@
     if (audioCtx.state === 'suspended') audioCtx.resume();
   }
   function playBuzz() {
-    try {
-      ensureAudioCtx();
-      const now = audioCtx.currentTime;
+    try { ensureAudioCtx(); const now = audioCtx.currentTime;
       const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
-      osc.type = 'sawtooth';
-      osc.frequency.setValueAtTime(220, now);
-      osc.frequency.exponentialRampToValueAtTime(95, now + 0.32);
-      gain.gain.setValueAtTime(0, now);
-      gain.gain.linearRampToValueAtTime(0.18, now + 0.01);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.38);
-      osc.connect(gain).connect(audioCtx.destination);
-      osc.start(now); osc.stop(now + 0.42);
+      osc.type = 'sawtooth'; osc.frequency.setValueAtTime(220, now); osc.frequency.exponentialRampToValueAtTime(95, now + 0.32);
+      gain.gain.setValueAtTime(0, now); gain.gain.linearRampToValueAtTime(0.18, now + 0.01); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.38);
+      osc.connect(gain).connect(audioCtx.destination); osc.start(now); osc.stop(now + 0.42);
     } catch (_) {}
   }
   function playChime() {
-    try {
-      ensureAudioCtx();
-      const now = audioCtx.currentTime;
+    try { ensureAudioCtx(); const now = audioCtx.currentTime;
       [880, 1320, 1760].forEach((freq, i) => {
         const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
-        osc.frequency.value = freq; osc.type = 'sine';
-        const start = now + i * 0.06;
-        gain.gain.setValueAtTime(0, start);
-        gain.gain.linearRampToValueAtTime(0.22, start + 0.01);
-        gain.gain.exponentialRampToValueAtTime(0.001, start + 0.5);
-        osc.connect(gain).connect(audioCtx.destination);
-        osc.start(start); osc.stop(start + 0.55);
+        osc.frequency.value = freq; osc.type = 'sine'; const start = now + i * 0.06;
+        gain.gain.setValueAtTime(0, start); gain.gain.linearRampToValueAtTime(0.22, start + 0.01); gain.gain.exponentialRampToValueAtTime(0.001, start + 0.5);
+        osc.connect(gain).connect(audioCtx.destination); osc.start(start); osc.stop(start + 0.55);
       });
     } catch (_) {}
   }
 
   // ====================================================================
-  //  Playback
+  //  Clip playback + points timer
   // ====================================================================
-  function stopIntro() {
-    clearTimeout(introTimer); introTimer = null;
-    try { player.pause(); } catch (_) {}
-    eqEl.classList.add('paused');
+  function clearTimers() { timers.forEach(clearTimeout); timers = []; if (pointsInterval) { clearInterval(pointsInterval); pointsInterval = null; } }
+  function stopAudio() { try { player.pause(); } catch (_) {} eqEl.classList.add('paused'); }
+
+  function currentPoints() {
+    const windowMs = clips.length * CLIP_MS;
+    const elapsed = Date.now() - roundStart;
+    const frac = Math.min(1, elapsed / windowMs);
+    return Math.max(MIN_POINTS, Math.round(MAX_POINTS - frac * (MAX_POINTS - MIN_POINTS)));
   }
-  function playIntro() {
-    clearTimeout(introTimer);
-    try { player.currentTime = 0; const p = player.play(); if (p && p.catch) p.catch(() => {}); } catch (_) {}
+
+  function playClip(i) {
+    clipIdx = i;
+    currentMeta = clips[i];
+    clipTag.textContent = 'Clip ' + (i + 1) + ' of ' + clips.length;
+    try { player.src = clips[i].previewUrl; player.currentTime = 0; const p = player.play(); if (p && p.catch) p.catch(() => {}); } catch (_) {}
     eqEl.classList.remove('paused');
-    if (!answered) playStateEl.textContent = 'Playing…';
-    introTimer = setTimeout(() => {
-      stopIntro();
-      if (!answered) playStateEl.textContent = 'Name the sub-genre';
-    }, INTRO_MS);
+    if (!answered) playStateEl.textContent = 'Listening…';
+  }
+
+  function startSequence() {
+    roundStart = Date.now();
+    clipIdx = 0;
+    playClip(0);
+    for (let i = 1; i < clips.length; i++) {
+      timers.push(setTimeout(() => { if (!answered) playClip(i); }, i * CLIP_MS));
+    }
+    // end of all clips
+    timers.push(setTimeout(() => {
+      if (!answered) { stopAudio(); playStateEl.textContent = 'Last chance — name it'; }
+    }, clips.length * CLIP_MS));
+    // live points
+    pointsEl.textContent = MAX_POINTS;
+    pointsInterval = setInterval(() => { if (!answered) pointsEl.textContent = currentPoints(); }, 150);
+  }
+
+  function replayClip() {
+    try { player.currentTime = 0; const p = player.play(); if (p && p.catch) p.catch(() => {}); eqEl.classList.remove('paused'); } catch (_) {}
   }
 
   // ====================================================================
   //  Flow
   // ====================================================================
-  function startChapter() {
-    if (chapterIdx >= CHAPTERS.length) { showEnd(); return; }
-    const ch = CHAPTERS[chapterIdx];
-    chapterCorrect = 0;
-    chKicker.textContent = 'Chapter ' + (chapterIdx + 1) + ' / ' + CHAPTERS.length;
+  function buildHome() {
+    chapterList.innerHTML = '';
+    CHAPTERS.forEach((ch, i) => {
+      const card = document.createElement('button');
+      card.className = 'ch-card'; card.type = 'button';
+      const num = document.createElement('span'); num.className = 'ch-num'; num.textContent = (i + 1);
+      const body = document.createElement('div'); body.className = 'ch-body';
+      const name = document.createElement('span'); name.className = 'ch-name'; name.textContent = ch.title;
+      const meta = document.createElement('span'); meta.className = 'ch-meta'; meta.textContent = ch.scene;
+      body.appendChild(name); body.appendChild(meta);
+      const bestVal = parseInt(localStorage.getItem(chBestKey(ch)) || '0', 10);
+      const bv = document.createElement('span'); bv.className = 'ch-best'; bv.textContent = bestVal ? (bestVal + ' pts') : 'New';
+      card.appendChild(num); card.appendChild(body); card.appendChild(bv);
+      card.addEventListener('click', () => { ensureAudioCtx(); openChapter(i); });
+      chapterList.appendChild(card);
+    });
+  }
+
+  function goHome() {
+    clearTimers(); stopAudio();
+    streak = 0; chapterScore = 0;
+    buildHome(); updateFooter();
+    show('home');
+  }
+
+  function openChapter(i) {
+    chapterIdx = i; roundIdx = 0; chapterScore = 0; streak = 0;
+    const ch = CHAPTERS[i];
+    chKicker.textContent = 'Chapter ' + (i + 1) + ' / ' + CHAPTERS.length;
     chTitle.textContent = ch.title;
     chScene.textContent = ch.scene;
     chIntro.textContent = ch.intro;
@@ -366,47 +423,31 @@
   }
 
   async function loadRound() {
+    clearTimers(); stopAudio();
     const ch = CHAPTERS[chapterIdx];
     if (!ch || roundIdx >= ch.rounds.length) { showChapterEnd(); return; }
     answered = false;
     show('loading');
     const round = ch.rounds[roundIdx];
 
-    pool = shuffle(round.tracks);
-    const first = await resolvePreview(pool, 0);
-    if (!first) {
-      errorText.textContent = 'Couldn’t load a track for this one (it may not be on Apple Music). Skip it?';
+    // resolve up to CLIPS previews from the round's tracks
+    const candidates = shuffle(round.tracks);
+    clips = [];
+    for (let i = 0; i < candidates.length && clips.length < CLIPS; i++) {
+      const meta = await resolveOne(candidates[i]);
+      if (meta) clips.push(meta);
+    }
+    if (clips.length === 0) {
+      errorText.textContent = 'Couldn’t load clips for this one (may not be on Apple Music). Skip it?';
       show('error');
       return;
     }
-    usedIdx = first.idx;
-    currentMeta = first.meta;
-    player.src = first.meta.previewUrl;
 
-    anotherBtn.hidden = pool.length < 2;
-    anotherBtn.disabled = false;
-    anotherBtn.textContent = 'Hear another track ↻';
-
-    roundTag.textContent = 'Track ' + (roundIdx + 1) + ' of ' + ch.rounds.length;
     renderOptions(round, ch);
-    updateFooter();
     show('round');
-    playStateEl.textContent = 'Playing…';
-    playIntro();
-  }
-
-  async function playAnotherTrack() {
-    if (!pool) return;
-    anotherBtn.disabled = true;
-    anotherBtn.textContent = 'Loading…';
-    const next = await resolvePreview(pool, usedIdx + 1);
-    if (next) {
-      usedIdx = next.idx; currentMeta = next.meta;
-      player.src = next.meta.previewUrl; playIntro();
-    }
-    const more = pool.length - 1 - usedIdx > 0;
-    anotherBtn.disabled = !more;
-    anotherBtn.textContent = more ? 'Hear another track ↻' : 'No other track';
+    pointsEl.textContent = MAX_POINTS;
+    playStateEl.textContent = 'Listening…';
+    startSequence();
   }
 
   function renderOptions(round, ch) {
@@ -414,13 +455,10 @@
     const outside = shuffle(ALL_GENRES.filter((g) => g !== round.genre && siblings.indexOf(g) < 0));
     const distractors = siblings.concat(outside).slice(0, 3);
     const choices = shuffle([round.genre].concat(distractors));
-
     optionsEl.innerHTML = '';
     choices.forEach((g) => {
       const btn = document.createElement('button');
-      btn.className = 'option';
-      btn.type = 'button';
-      btn.textContent = g;
+      btn.className = 'option'; btn.type = 'button'; btn.textContent = g;
       btn.addEventListener('click', () => handleGuess(g, round, btn));
       optionsEl.appendChild(btn);
     });
@@ -428,9 +466,9 @@
 
   function handleGuess(choice, round, btn) {
     if (answered) return;
+    const award = currentPoints();
     answered = true;
-    stopIntro();
-    anotherBtn.disabled = true;
+    clearTimers(); stopAudio();
 
     const correct = choice === round.genre;
     Array.from(optionsEl.querySelectorAll('.option')).forEach((b) => {
@@ -440,21 +478,20 @@
       else b.classList.add('dim');
     });
 
+    let gained = 0;
     if (correct) {
-      streak += 1; chapterCorrect += 1;
+      gained = award; chapterScore += award; streak += 1;
       if (streak > best) { best = streak; localStorage.setItem('rt_best', String(best)); }
       playChime();
-    } else {
-      streak = 0;
-      playBuzz();
-    }
+    } else { streak = 0; playBuzz(); }
     updateFooter();
-    setTimeout(() => showReveal(round, correct), 600);
+    setTimeout(() => showReveal(round, correct, gained), 550);
   }
 
-  function showReveal(round, correct) {
+  function showReveal(round, correct, gained) {
     verdictEl.textContent = correct ? 'Correct' : 'Not quite';
     verdictEl.className = 'verdict ' + (correct ? 'good' : 'bad');
+    revPoints.textContent = correct ? ('+' + gained) : '';
     revName.textContent = round.genre;
     revMeta.textContent = CHAPTERS[chapterIdx].scene;
     if (currentMeta) {
@@ -462,71 +499,45 @@
       revTrack.hidden = false;
     } else { revTrack.hidden = true; }
     revNote.textContent = round.note || '';
+    // lineage connection on the genre map
+    const lin = document.getElementById('lineage');
+    lin.innerHTML = (round.from && round.from.length) ? ('Descends from <b>' + round.from.map(escapeHtml).join(' + ') + '</b>') : '';
+
     const ch = CHAPTERS[chapterIdx];
     nextBtn.textContent = (roundIdx >= ch.rounds.length - 1) ? 'Finish chapter' : 'Next track';
     show('reveal');
   }
 
-  function nextRound() {
-    roundIdx += 1;
-    localStorage.setItem('rt_rd', String(roundIdx));
-    const ch = CHAPTERS[chapterIdx];
-    if (roundIdx >= ch.rounds.length) showChapterEnd();
-    else loadRound();
-  }
+  function nextRound() { roundIdx += 1; loadRound(); }
 
   function showChapterEnd() {
+    clearTimers(); stopAudio();
     const ch = CHAPTERS[chapterIdx];
+    const prevBest = parseInt(localStorage.getItem(chBestKey(ch)) || '0', 10);
+    if (chapterScore > prevBest) localStorage.setItem(chBestKey(ch), String(chapterScore));
     ceTitle.textContent = ch.title;
     ceOutro.textContent = ch.outro;
-    ceScore.textContent = 'You named ' + chapterCorrect + ' of ' + ch.rounds.length + ' in this chapter.';
-    ceNextBtn.textContent = (chapterIdx >= CHAPTERS.length - 1) ? 'See your results' : 'Next chapter';
+    ceScore.textContent = 'You scored ' + chapterScore + ' pts' + (chapterScore > prevBest ? ' — new best!' : (prevBest ? ' (best ' + prevBest + ')' : ''));
     show('chapterEnd');
-  }
-
-  function nextChapter() {
-    chapterIdx += 1; roundIdx = 0;
-    localStorage.setItem('rt_ch', String(chapterIdx));
-    localStorage.setItem('rt_rd', '0');
-    if (chapterIdx >= CHAPTERS.length) showEnd();
-    else startChapter();
-  }
-
-  function showEnd() {
-    endText.innerHTML = 'You travelled <b>' + CHAPTERS.length + '</b> scenes — from the hardcore continuum to the internet underground. Best streak: <b>' + best + '</b>.';
-    show('end');
-  }
-
-  function resetAll() {
-    chapterIdx = 0; roundIdx = 0; streak = 0; chapterCorrect = 0;
-    localStorage.setItem('rt_ch', '0'); localStorage.setItem('rt_rd', '0');
-    updateFooter();
   }
 
   // ====================================================================
   //  Events
   // ====================================================================
-  startBtn.addEventListener('click', () => { ensureAudioCtx(); startChapter(); });
   chBeginBtn.addEventListener('click', () => { ensureAudioCtx(); loadRound(); });
+  chBackBtn.addEventListener('click', goHome);
   retryBtn.addEventListener('click', () => { ensureAudioCtx(); loadRound(); });
   skipBtn.addEventListener('click', () => { ensureAudioCtx(); nextRound(); });
-  anotherBtn.addEventListener('click', () => { ensureAudioCtx(); playAnotherTrack(); });
-  replayBtn.addEventListener('click', () => { ensureAudioCtx(); playIntro(); });
+  replayBtn.addEventListener('click', () => { ensureAudioCtx(); replayClip(); });
   nextBtn.addEventListener('click', () => { ensureAudioCtx(); nextRound(); });
-  ceNextBtn.addEventListener('click', () => { ensureAudioCtx(); nextChapter(); });
-  replayAllBtn.addEventListener('click', () => { ensureAudioCtx(); resetAll(); startChapter(); });
+  ceBackBtn.addEventListener('click', goHome);
 
   player.addEventListener('playing', () => eqEl.classList.remove('paused'));
   player.addEventListener('pause', () => eqEl.classList.add('paused'));
   player.addEventListener('ended', () => eqEl.classList.add('paused'));
 
   // ---- Init ----
-  if (chapterIdx >= CHAPTERS.length) { chapterIdx = 0; roundIdx = 0; }
+  buildHome();
   updateFooter();
-  if (chapterIdx > 0 || roundIdx > 0) {
-    const lead = views.start.querySelector('.lead');
-    if (lead) lead.textContent = 'Welcome back — pick up in chapter ' + (chapterIdx + 1) + ' of ' + CHAPTERS.length + '.';
-    startBtn.textContent = 'Continue';
-  }
-  show('start');
+  show('home');
 })();
