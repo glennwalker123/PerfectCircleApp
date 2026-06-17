@@ -210,6 +210,15 @@
     if (ALL_GENRES.indexOf(r.genre) < 0) ALL_GENRES.push(r.genre);
   }));
 
+  // Spotify-Wrapped-style signature gradient per chapter.
+  const HOME_COLORS = ['#7A4DFF', '#FF5CA8'];
+  const CHAPTER_COLORS = {
+    hcc: ['#FF5CA8', '#7A4DFF'], house: ['#FFC83D', '#FF6B39'], techno: ['#27E0C4', '#2D6CFF'],
+    punk: ['#FF5C5C', '#FFB03A'], afterpunk: ['#B06BFF', '#FF7AD6'], metal: ['#AEB4C6', '#565B72'],
+    soundsystem: ['#2BD96B', '#FFD23F'], carioca: ['#22D3FF', '#FFE14D'], westafrica: ['#FF8A3C', '#FFCE3C'],
+    sahouse: ['#FF5CA0', '#36E27B'], hiphop: ['#FFC23C', '#FF5C7A'],
+  };
+
   const CLIP_MS = 20000;       // each clip plays 20s
   const CLIPS = 3;             // up to 3 clips per round
   const TIERS = [1000, 600, 300]; // points by phase: 4 options / 3 / 2
@@ -227,6 +236,7 @@
     reveal: document.getElementById('vReveal'),
     chapterEnd: document.getElementById('vChapterEnd'),
   };
+  const stageEl = document.getElementById('stage');
   const chapterList = document.getElementById('chapterList');
   const chBackBtn = document.getElementById('chBackBtn');
   const chBeginBtn = document.getElementById('chBeginBtn');
@@ -293,6 +303,7 @@
   }
   function escapeHtml(s) { return String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
   function show(view) { Object.keys(views).forEach((k) => { views[k].hidden = k !== view; }); }
+  function setTheme(pair) { stageEl.style.setProperty('--c1', pair[0]); stageEl.style.setProperty('--c2', pair[1]); }
   function chBestKey(ch) { return 'rt_best_' + ch.id; }
   function updateFooter() { scoreStat.textContent = chapterScore; footerStreak.textContent = streak; bestEl.textContent = best; }
 
@@ -425,6 +436,8 @@
       body.appendChild(name); body.appendChild(meta);
       const bestVal = parseInt(localStorage.getItem(chBestKey(ch)) || '0', 10);
       const bv = document.createElement('span'); bv.className = 'ch-best'; bv.textContent = bestVal ? (bestVal + ' pts') : 'New';
+      const cc = CHAPTER_COLORS[ch.id] || HOME_COLORS;
+      card.style.setProperty('--cc1', cc[0]); card.style.setProperty('--cc2', cc[1]);
       card.appendChild(num); card.appendChild(body); card.appendChild(bv);
       card.addEventListener('click', () => { ensureAudioCtx(); openChapter(i); });
       chapterList.appendChild(card);
@@ -434,6 +447,7 @@
   function goHome() {
     clearTimers(); stopAudio();
     streak = 0; chapterScore = 0;
+    setTheme(HOME_COLORS);
     buildHome(); updateFooter();
     show('home');
   }
@@ -441,6 +455,7 @@
   function openChapter(i) {
     chapterIdx = i; roundIdx = 0; chapterScore = 0; streak = 0;
     const ch = CHAPTERS[i];
+    setTheme(CHAPTER_COLORS[ch.id] || HOME_COLORS);
     chKicker.textContent = 'Chapter ' + (i + 1) + ' / ' + CHAPTERS.length;
     chTitle.textContent = ch.title;
     chScene.textContent = ch.scene;
@@ -585,6 +600,7 @@
   });
 
   // ---- Init ----
+  setTheme(HOME_COLORS);
   buildHome();
   updateFooter();
   show('home');
