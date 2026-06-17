@@ -33,9 +33,13 @@ html, body {
 .view {
   flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
   gap: 18px; padding: 30px 24px; text-align: center; overflow-y: auto; color: var(--ink);
+  animation: viewIn 460ms cubic-bezier(.2,.8,.2,1);
 }
 .view[hidden] { display: none; }
 .view-home { justify-content: flex-start; gap: 14px; }
+
+@keyframes viewIn { from { opacity: 0; transform: translateY(18px) scale(0.985); } to { opacity: 1; transform: none; } }
+@keyframes popIn { 0% { opacity: 0; transform: scale(0.5); } 60% { transform: scale(1.08); } 100% { opacity: 1; transform: scale(1); } }
 
 .lead { margin: 0; font-size: 17px; line-height: 1.5; font-weight: 500; color: var(--ink); max-width: 420px; }
 .kicker { font-family: var(--display); font-size: 13px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; color: var(--ink-soft); }
@@ -48,7 +52,14 @@ html, body {
   background: linear-gradient(120deg, var(--cc1, #fff) 0%, var(--cc2, #eee) 100%);
   box-shadow: 0 8px 22px rgba(0,0,0,0.22);
   transition: transform 90ms ease;
+  animation: viewIn 480ms cubic-bezier(.2,.8,.2,1) backwards;
 }
+.ch-card:nth-child(1){animation-delay:30ms} .ch-card:nth-child(2){animation-delay:70ms}
+.ch-card:nth-child(3){animation-delay:110ms} .ch-card:nth-child(4){animation-delay:150ms}
+.ch-card:nth-child(5){animation-delay:190ms} .ch-card:nth-child(6){animation-delay:230ms}
+.ch-card:nth-child(7){animation-delay:270ms} .ch-card:nth-child(8){animation-delay:310ms}
+.ch-card:nth-child(9){animation-delay:350ms} .ch-card:nth-child(10){animation-delay:390ms}
+.ch-card:nth-child(11){animation-delay:430ms}
 .ch-card:active { transform: scale(0.985); }
 .ch-num { font-family: var(--display); font-size: 22px; font-weight: 700; min-width: 28px; color: rgba(0,0,0,0.4); }
 .ch-body { flex: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
@@ -95,14 +106,20 @@ html, body {
 .option.correct { background: var(--ink); color: #fff; }
 .option.wrong { background: rgba(0,0,0,0.25); color: rgba(255,255,255,0.85); }
 .option.dim { opacity: 0.4; }
-.option.eliminated { display: none; }
+.option.eliminated {
+  opacity: 0.5;
+  text-decoration: line-through;
+  text-decoration-thickness: 3px;
+  box-shadow: none;
+  pointer-events: none;
+}
 
 /* ---- Reveal (Wrapped-style stat card) ---- */
 .reveal { gap: 8px; }
 .verdict { font-family: var(--display); font-size: 14px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--ink); }
-.points-awarded { font-family: var(--display); font-size: 60px; font-weight: 700; color: var(--ink); line-height: 0.95; letter-spacing: -2px; }
+.points-awarded { font-family: var(--display); font-size: 60px; font-weight: 700; color: var(--ink); line-height: 0.95; letter-spacing: -2px; animation: popIn 560ms cubic-bezier(.2,.9,.3,1.25); }
 .points-awarded:empty { display: none; }
-.genre-name { font-family: var(--display); font-size: 46px; font-weight: 700; letter-spacing: -1.4px; line-height: 0.96; margin: 0; color: var(--ink); }
+.genre-name { font-family: var(--display); font-size: 46px; font-weight: 700; letter-spacing: -1.4px; line-height: 0.96; margin: 0; color: var(--ink); animation: popIn 520ms 60ms cubic-bezier(.2,.9,.3,1.2) backwards; }
 .genre-meta { font-family: var(--display); font-size: 12px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: var(--ink-soft); }
 .track-line { margin: 4px 0 0; font-size: 14px; color: var(--ink-soft); }
 .track-line b { color: var(--ink); font-weight: 700; }
