@@ -319,9 +319,21 @@
   // ====================================================================
   //  Sound effects
   // ====================================================================
+  const SILENT = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=';
+  let audioUnlocked = false;
+  function unlockAudio() {
+    if (audioUnlocked) return;
+    try {
+      player.src = SILENT;
+      const p = player.play();
+      if (p && p.then) p.then(() => { audioUnlocked = true; try { player.pause(); player.currentTime = 0; } catch (_) {} }).catch(() => {});
+      else audioUnlocked = true;
+    } catch (_) {}
+  }
   function ensureAudioCtx() {
     if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     if (audioCtx.state === 'suspended') audioCtx.resume();
+    unlockAudio();
   }
   function playBuzz() {
     try { ensureAudioCtx(); const now = audioCtx.currentTime;
@@ -548,6 +560,10 @@
   player.addEventListener('playing', () => eqEl.classList.remove('paused'));
   player.addEventListener('pause', () => eqEl.classList.add('paused'));
   player.addEventListener('ended', () => eqEl.classList.add('paused'));
+  player.addEventListener('error', () => {
+    // a clip URL failed — jump to the next available clip if there is one
+    if (!answered && clips.length > 1 && clipIdx < clips.length - 1) playClip(clipIdx + 1);
+  });
 
   // ---- Init ----
   buildHome();
