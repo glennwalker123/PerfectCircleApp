@@ -203,9 +203,73 @@
     },
   ];
 
-  // Normalise tracks ({t,a} -> {title,artist}) and build the genre pool.
+  // Extra tracks per sub-genre — enlarges each pool so the 3 played clips are
+  // randomised on every load. (Double-quoted to avoid apostrophe escaping.)
+  const EXTRA = {
+    "Breakbeat Hardcore": [{t:"Trip II the Moon",a:"Acen"},{t:"Sound of Eden",a:"Shades of Rhythm"}],
+    "Jungle": [{t:"Junglist",a:"Congo Natty"},{t:"Style from the Dark Side",a:"Aphrodite"}],
+    "UK Garage": [{t:"Flowers",a:"Sweet Female Attitude"},{t:"Gotta Get Thru This",a:"Daniel Bedingfield"}],
+    "Grime": [{t:"Ps and Qs",a:"Kano"},{t:"Pow! (Forward)",a:"Lethal Bizzle"}],
+    "Dubstep": [{t:"Night",a:"Benga"},{t:"Where's My Money",a:"Caspa"}],
+    "UK Drill": [{t:"Body",a:"Russ Millions & Tion Wayne"},{t:"Homerton B",a:"Unknown T"}],
+    "Disco": [{t:"Good Times",a:"Chic"},{t:"We Are Family",a:"Sister Sledge"}],
+    "Chicago House": [{t:"Promised Land",a:"Joe Smooth"},{t:"Can You Feel It",a:"Mr. Fingers"}],
+    "Acid House": [{t:"151",a:"Armando"},{t:"Where's Your Child",a:"Bam Bam"}],
+    "Ghetto House": [{t:"Get Get Down",a:"Paul Johnson"},{t:"Wouldn't You Like to Be a Hoe Too",a:"DJ Slugo"}],
+    "Footwork": [{t:"Erotic Heat",a:"Jlin"},{t:"Space Juke",a:"RP Boo"}],
+    "Detroit Techno": [{t:"Clear",a:"Cybotron"},{t:"Jaguar",a:"Underground Resistance"}],
+    "Acid Techno": [{t:"I Love Acid",a:"Luke Vibert"},{t:"Komputer",a:"Bryan Zentz"}],
+    "Dub Techno": [{t:"Biokinetics",a:"Porter Ricks"},{t:"Sustain",a:"Deepchord"}],
+    "Minimal Techno": [{t:"Losing Control",a:"Daniel Bell"},{t:"Charly",a:"Pan-Pot"}],
+    "Industrial Techno": [{t:"Colonized",a:"Paula Temple"},{t:"Blood Witness",a:"Regis"}],
+    "Gabber": [{t:"Rainbow in the Sky",a:"DJ Paul Elstak"},{t:"Army of Hardcore",a:"Neophyte"}],
+    "Punk": [{t:"New Rose",a:"The Damned"},{t:"Ever Fallen in Love",a:"Buzzcocks"}],
+    "Hardcore Punk": [{t:"Holiday in Cambodia",a:"Dead Kennedys"},{t:"Wild in the Streets",a:"Circle Jerks"}],
+    "Post-Hardcore": [{t:"Dine Alone",a:"Quicksand"},{t:"Bury Your Flame",a:"Hot Snakes"}],
+    "Emo": [{t:"Why Did Ever We Meet",a:"The Promise Ring"},{t:"Gloria",a:"Mineral"}],
+    "Pop-Punk": [{t:"Fat Lip",a:"Sum 41"},{t:"Sugar, We're Goin Down",a:"Fall Out Boy"}],
+    "Ska Punk": [{t:"Superman",a:"Goldfinger"},{t:"Sound System",a:"Operation Ivy"}],
+    "Post-Punk": [{t:"Public Image",a:"Public Image Ltd"},{t:"Marquee Moon",a:"Television"}],
+    "New Wave": [{t:"Just What I Needed",a:"The Cars"},{t:"Everybody Wants to Rule the World",a:"Tears for Fears"}],
+    "Goth Rock": [{t:"Temple of Love",a:"The Sisters of Mercy"},{t:"Moonchild",a:"Fields of the Nephilim"}],
+    "Synth-Pop": [{t:"Tainted Love",a:"Soft Cell"},{t:"Only You",a:"Yazoo"}],
+    "Shoegaze": [{t:"Sweetness and Light",a:"Lush"},{t:"Cherry-Coloured Funk",a:"Cocteau Twins"}],
+    "Thrash Metal": [{t:"Caught in a Mosh",a:"Anthrax"},{t:"Bonded by Blood",a:"Exodus"}],
+    "Death Metal": [{t:"Slowly We Rot",a:"Obituary"},{t:"Dead by Dawn",a:"Deicide"}],
+    "Black Metal": [{t:"Dunkelheit",a:"Burzum"},{t:"A Fine Day to Die",a:"Bathory"}],
+    "Doom Metal": [{t:"Born Too Late",a:"Saint Vitus"},{t:"Dragonaut",a:"Sleep"}],
+    "Nu Metal": [{t:"Wait and Bleed",a:"Slipknot"},{t:"My Own Summer (Shove It)",a:"Deftones"}],
+    "Metalcore": [{t:"Carrion",a:"Parkway Drive"},{t:"Tears Don't Fall",a:"Bullet for My Valentine"}],
+    "Ska": [{t:"Al Capone",a:"Prince Buster"},{t:"Simmer Down",a:"The Wailers"}],
+    "Rocksteady": [{t:"Perfidia",a:"Phyllis Dillon"},{t:"Pretty Looks Isn't All",a:"The Heptones"}],
+    "Reggae": [{t:"Marcus Garvey",a:"Burning Spear"},{t:"Night Nurse",a:"Gregory Isaacs"}],
+    "Dub": [{t:"Beam Me Up Scotty",a:"Scientist"},{t:"Black Ark",a:"Mad Professor"}],
+    "Dancehall": [{t:"Who Am I",a:"Beenie Man"},{t:"Clarks",a:"Vybz Kartel"}],
+    "Reggaeton": [{t:"Pa' Que Retozen",a:"Tego Calderón"},{t:"Quiero Bailar",a:"Ivy Queen"}],
+    "Miami Bass": [{t:"Whoomp! (There It Is)",a:"Tag Team"},{t:"C'mon N' Ride It (The Train)",a:"Quad City DJ's"}],
+    "Baile Funk": [{t:"Cerol na Mão",a:"Bonde do Tigrão"},{t:"Boladona",a:"Tati Quebra Barraco"}],
+    "Funk Ostentação": [{t:"Fugir pra Onde",a:"MC Livinho"},{t:"Cara Bacana",a:"MC G15"}],
+    "Brega Funk": [{t:"Vai Novinha",a:"Kevin o Chris"},{t:"Evoluiu",a:"Kevin o Chris"}],
+    "Highlife": [{t:"Aben Wo Ha",a:"Daddy Lumba"},{t:"Yaa Amponsah",a:"Koo Nimo"}],
+    "Afrobeat": [{t:"Beng Beng Beng",a:"Femi Kuti"},{t:"Lady",a:"Fela Kuti"}],
+    "Hiplife": [{t:"Oye Ohene",a:"Obrafour"},{t:"Aha",a:"Tic Tac"}],
+    "Azonto": [{t:"Shashee Wowo",a:"Stay Jay"},{t:"Lapaz Toyota",a:"Guru"}],
+    "Afrobeats": [{t:"Calm Down",a:"Rema"},{t:"Love Nwantiti",a:"CKay"}],
+    "Kwaito": [{t:"Kaffir",a:"Arthur Mafokate"},{t:"Sweety Lavo",a:"Trompies"}],
+    "Gqom": [{t:"Mercedes",a:"Rudeboyz"},{t:"Pakisha",a:"Dladla Mshunqisi"}],
+    "Amapiano": [{t:"Izolo",a:"DJ Maphorisa"},{t:"Woza",a:"Mr JazziQ"}],
+    "Old-School Hip-Hop": [{t:"The Breaks",a:"Kurtis Blow"},{t:"Sucker M.C.'s",a:"Run-DMC"}],
+    "Boom Bap": [{t:"Mass Appeal",a:"Gang Starr"},{t:"Shook Ones, Pt. II",a:"Mobb Deep"}],
+    "Memphis Rap": [{t:"Sippin on Some Syrup",a:"Three 6 Mafia"},{t:"Armed Robbery",a:"Eightball & MJG"}],
+    "Trap": [{t:"Lemonade",a:"Gucci Mane"},{t:"Soul Survivor",a:"Young Jeezy"}],
+    "Phonk": [{t:"Limbo",a:"Freddie Dredd"},{t:"Phonky Town",a:"PlayaPhonk"}],
+    "Drill": [{t:"Big Drip",a:"Fivio Foreign"},{t:"No Suburban Pt. 2",a:"Sheff G"}],
+  };
+
+  // Normalise tracks ({t,a} -> {title,artist}), fold in the extras, build pool.
   const ALL_GENRES = [];
   CHAPTERS.forEach((ch) => ch.rounds.forEach((r) => {
+    if (EXTRA[r.genre]) r.tracks = r.tracks.concat(EXTRA[r.genre]);
     r.tracks = r.tracks.map((x) => ({ title: x.t, artist: x.a }));
     if (ALL_GENRES.indexOf(r.genre) < 0) ALL_GENRES.push(r.genre);
   }));
@@ -246,6 +310,7 @@
   const CLIP_MS = 20000;       // each clip plays 20s
   const CLIPS = 3;             // up to 3 clips per round
   const TIERS = [1000, 600, 300]; // points by song: 1st / 2nd / 3rd clip
+  const CHAPTER_LEN = 12;      // questions per chapter (sub-genres cycle to fill)
   const FETCH_TIMEOUT = 7000;
 
   // ====================================================================
@@ -307,6 +372,7 @@
   let clipIdx = 0;
   let timers = [];             // misc timeouts
   let clipTimer = null;        // auto-advance timer for the current clip
+  let roundQueue = [];         // sequence of round indices for the chapter
   let roundGenre = null;
   let currentMeta = null;
 
@@ -321,6 +387,20 @@
     return a;
   }
   function escapeHtml(s) { return String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
+
+  // Build a play order: shuffle the chapter's sub-genres and cycle until we
+  // reach CHAPTER_LEN, avoiding the same sub-genre twice in a row.
+  function buildQueue(ch) {
+    const base = ch.rounds.map((_, i) => i);
+    const target = Math.max(CHAPTER_LEN, base.length);
+    let q = [];
+    while (q.length < target) {
+      const s = shuffle(base);
+      if (q.length && s[0] === q[q.length - 1] && s.length > 1) { const j = 1 + Math.floor(Math.random() * (s.length - 1)); const t = s[0]; s[0] = s[j]; s[j] = t; }
+      q = q.concat(s);
+    }
+    return q.slice(0, target);
+  }
   function show(view) { Object.keys(views).forEach((k) => { views[k].hidden = k !== view; }); }
   function setTheme(pair) { stageEl.style.setProperty('--c1', pair[0]); stageEl.style.setProperty('--c2', pair[1]); }
   function chBestKey(ch) { return 'rt_best_' + ch.id; }
@@ -451,6 +531,7 @@
   function openChapter(i) {
     chapterIdx = i; roundIdx = 0; chapterScore = 0; streak = 0;
     const ch = CHAPTERS[i];
+    roundQueue = buildQueue(ch);
     setTheme(CHAPTER_COLORS[ch.id] || HOME_COLORS);
     chKicker.textContent = 'Chapter ' + (i + 1) + ' / ' + CHAPTERS.length;
     chTitle.textContent = ch.title;
@@ -463,10 +544,10 @@
   async function loadRound() {
     clearTimers(); stopAudio();
     const ch = CHAPTERS[chapterIdx];
-    if (!ch || roundIdx >= ch.rounds.length) { showChapterEnd(); return; }
+    if (!ch || roundIdx >= roundQueue.length) { showChapterEnd(); return; }
     answered = false;
     show('loading');
-    const round = ch.rounds[roundIdx];
+    const round = ch.rounds[roundQueue[roundIdx]];
 
     // resolve up to CLIPS previews from the round's tracks
     const candidates = shuffle(round.tracks);
