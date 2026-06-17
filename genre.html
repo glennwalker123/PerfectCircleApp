@@ -9,70 +9,84 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
 <meta http-equiv="Pragma" content="no-cache" />
 <meta http-equiv="Expires" content="0" />
-<title>Guess the Genre</title>
-<link rel="stylesheet" href="genre.css?v=1" />
+<title>Roots — The Family Tree of Music</title>
+<link rel="stylesheet" href="genre.css?v=2" />
 </head>
 <body>
   <div class="app">
     <header class="topbar">
-      <h1>Guess the Genre</h1>
-      <p class="hint" id="hint">Listen to the intro, then pick the genre</p>
+      <h1>Roots</h1>
+      <p class="hint" id="hint">Trace the family tree of music</p>
+      <div class="legend" id="legend"></div>
     </header>
 
     <div class="stage">
-      <!-- Idle / start -->
-      <div class="panel" id="startPanel">
-        <div class="big-emoji">🎧</div>
-        <p class="panel-text">Hear the first few seconds of a song and guess its genre.</p>
-        <button class="btn" id="startBtn">Start playing</button>
+      <div class="map-wrap" id="mapWrap">
+        <svg id="map" xmlns="http://www.w3.org/2000/svg"></svg>
       </div>
 
-      <!-- Loading a round -->
-      <div class="panel" id="loadingPanel" hidden>
-        <div class="spinner"></div>
-        <p class="panel-text">Loading a track…</p>
-      </div>
-
-      <!-- Error -->
-      <div class="panel" id="errorPanel" hidden>
-        <div class="big-emoji">😕</div>
-        <p class="panel-text" id="errorText">Couldn't load a track.</p>
-        <button class="btn" id="retryBtn">Try again</button>
-      </div>
-
-      <!-- Active round -->
-      <div class="panel round-panel" id="roundPanel" hidden>
-        <div class="now-playing">
-          <div class="eq" id="eq" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
-          <span id="playState">Playing intro…</span>
+      <div class="hud" id="hud">
+        <!-- Start -->
+        <div class="hud-view" id="hudStart">
+          <p class="panel-text">Hear a track, name the sub-genre, and watch the family tree of music grow — from the Delta blues to UK drill.</p>
+          <button class="btn" id="startBtn">Start the journey</button>
         </div>
 
-        <div class="reveal" id="reveal" hidden>
-          <img class="art" id="art" alt="" />
-          <div class="track-title" id="trackTitle"></div>
-          <div class="track-artist" id="trackArtist"></div>
+        <!-- Loading -->
+        <div class="hud-view" id="hudLoading" hidden>
+          <div class="spinner"></div>
+          <span class="panel-text">Cueing the track…</span>
         </div>
 
-        <div class="options" id="options"></div>
+        <!-- Error -->
+        <div class="hud-view" id="hudError" hidden>
+          <span class="panel-text" id="errorText">Couldn’t load a track.</span>
+          <button class="btn" id="retryBtn">Try again</button>
+        </div>
 
-        <div class="round-actions">
-          <button class="btn btn-ghost" id="replayBtn">Replay intro</button>
-          <button class="btn" id="nextBtn" hidden>Next song</button>
+        <!-- Guessing -->
+        <div class="hud-view" id="hudRound" hidden>
+          <div class="now-playing">
+            <div class="eq" id="eq" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+            <span id="playState">Playing intro…</span>
+            <button class="icon-btn" id="replayBtn" title="Replay intro">↺</button>
+          </div>
+          <div class="options" id="options"></div>
+        </div>
+
+        <!-- Reveal -->
+        <div class="hud-view reveal" id="hudReveal" hidden>
+          <div class="reveal-head">
+            <span class="reveal-dot" id="revealDot"></span>
+            <span class="reveal-name" id="revealName"></span>
+            <span class="reveal-era" id="revealEra"></span>
+          </div>
+          <div class="reveal-track" id="revealTrack"></div>
+          <p class="reveal-blurb" id="revealBlurb"></p>
+          <div class="reveal-links" id="revealLinks"></div>
+          <button class="btn" id="nextBtn">Next →</button>
+        </div>
+
+        <!-- End -->
+        <div class="hud-view" id="hudEnd" hidden>
+          <div class="big-emoji">🎶</div>
+          <p class="panel-text" id="endText"></p>
+          <button class="btn" id="replayJourneyBtn">Play again</button>
         </div>
       </div>
     </div>
 
     <footer class="controls">
-      <a class="link" href="index.html">← Perfect Circle</a>
+      <span class="stat">Discovered <span id="discovered">0</span>/<span id="total">0</span></span>
       <div class="stats">
-        <span class="stat">Best <span id="bestScore">—</span></span>
-        <span class="stat-sep">·</span>
         <span class="stat">Streak <span id="footerStreak">0</span></span>
+        <span class="stat-sep">·</span>
+        <span class="stat">Best <span id="bestScore">0</span></span>
       </div>
     </footer>
   </div>
 
-  <audio id="player" preload="auto" crossorigin="anonymous"></audio>
-  <script src="genre.js?v=1"></script>
+  <audio id="player" preload="auto"></audio>
+  <script src="genre.js?v=2"></script>
 </body>
 </html>

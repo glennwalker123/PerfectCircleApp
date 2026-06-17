@@ -158,21 +158,6 @@ html, body {
   opacity: 0.4;
 }
 
-.game-link {
-  text-align: center;
-  padding: 0 18px 14px;
-}
-
-.game-link a {
-  color: #9aa6bd;
-  text-decoration: none;
-  font-size: 13px;
-}
-
-.game-link a:active {
-  color: #cdd6ee;
-}
-
 .streak-row {
   margin-top: 12px;
   display: inline-flex;
