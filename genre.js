@@ -245,7 +245,7 @@
 
   const CLIP_MS = 20000;       // each clip plays 20s
   const CLIPS = 3;             // up to 3 clips per round
-  const TIERS = [1000, 600, 300]; // points by phase: 4 options / 3 / 2
+  const TIERS = [1000, 600, 300]; // points by song: 1st / 2nd / 3rd clip
   const FETCH_TIMEOUT = 7000;
 
   // ====================================================================
@@ -307,8 +307,8 @@
   let audioCtx = null;
   let clips = [];              // resolved metas for the active round
   let clipIdx = 0;
-  let timers = [];             // clip-advance + option-removal timeouts
-  let phase = 0;               // 0 = 4 options, 1 = 3 options, 2 = 2 options
+  let timers = [];             // misc timeouts
+  let clipTimer = null;        // auto-advance timer for the current clip
   let roundGenre = null;
   let currentMeta = null;
 
@@ -390,50 +390,35 @@
   // ====================================================================
   //  Clip playback + points timer
   // ====================================================================
-  function clearTimers() { timers.forEach(clearTimeout); timers = []; }
+  function clearTimers() { clearTimeout(clipTimer); clipTimer = null; timers.forEach(clearTimeout); timers = []; }
   function stopAudio() { try { player.pause(); } catch (_) {} eqEl.classList.add('paused'); }
 
-  function playClip(i) {
+  // Play clip i and fill its segment of the playbar; auto-advance after 20s.
+  function playClipAt(i) {
     clipIdx = i;
     currentMeta = clips[i];
     try { player.src = clips[i].previewUrl; player.currentTime = 0; const p = player.play(); if (p && p.catch) p.catch(() => {}); } catch (_) {}
     eqEl.classList.remove('paused');
     if (!answered) playStateEl.textContent = 'Listening…';
-  }
 
-  // Remove one still-visible WRONG option (keeps the answer + at least one decoy).
-  function removeOneOption() {
-    const wrong = Array.from(optionsEl.querySelectorAll('.option'))
-      .filter((b) => !b.classList.contains('eliminated') && b.textContent !== roundGenre);
-    if (wrong.length <= 1) return; // always leave the answer + one decoy
-    const victim = wrong[Math.floor(Math.random() * wrong.length)];
-    victim.classList.add('eliminated');
-    victim.disabled = true;
-  }
-
-  function startSequence() {
-    phase = 0;
-    const windowMs = clips.length * CLIP_MS;
-
-    // playbar fill across the whole window
+    const N = clips.length;
     pbFill.style.transition = 'none';
-    pbFill.style.width = '0%';
-    // force reflow so the transition restarts cleanly
-    void pbFill.offsetWidth;
-    pbFill.style.transition = 'width ' + windowMs + 'ms linear';
-    pbFill.style.width = '100%';
+    pbFill.style.width = (i / N * 100) + '%';
+    void pbFill.offsetWidth;            // reflow so the transition restarts
+    pbFill.style.transition = 'width ' + CLIP_MS + 'ms linear';
+    pbFill.style.width = ((i + 1) / N * 100) + '%';
 
-    playClip(0);
-    // advance clips
-    for (let i = 1; i < clips.length; i++) {
-      timers.push(setTimeout(() => { if (!answered) playClip(i); }, i * CLIP_MS));
-    }
-    // option removals at each third of the bar (1/3 and 2/3)
-    timers.push(setTimeout(() => { if (answered) return; phase = 1; removeOneOption(); }, windowMs / 3));
-    timers.push(setTimeout(() => { if (answered) return; phase = 2; removeOneOption(); }, (windowMs * 2) / 3));
-    // end of clips
-    timers.push(setTimeout(() => { if (!answered) { stopAudio(); playStateEl.textContent = 'Make your guess'; } }, windowMs));
+    clearTimeout(clipTimer);
+    clipTimer = setTimeout(onClipEnd, CLIP_MS);
   }
+
+  function onClipEnd() {
+    if (answered) return;
+    if (clipIdx < clips.length - 1) playClipAt(clipIdx + 1);
+    else { stopAudio(); playStateEl.textContent = 'Make your guess'; }
+  }
+
+  function startSequence() { playClipAt(0); }
 
   function replayClip() {
     try { player.currentTime = 0; const p = player.play(); if (p && p.catch) p.catch(() => {}); eqEl.classList.remove('paused'); } catch (_) {}
@@ -535,27 +520,39 @@
 
   function handleGuess(choice, round, btn) {
     if (answered) return;
-    answered = true;
-    clearTimers(); stopAudio();
 
-    const correct = choice === round.genre;
-    Array.from(optionsEl.querySelectorAll('.option')).forEach((b) => {
-      b.disabled = true;
-      if (b.textContent === round.genre) b.classList.add('correct');
-      else if (b === btn) b.classList.add('wrong');
-      else if (!b.classList.contains('eliminated')) b.classList.add('dim');
-    });
-
-    if (correct) {
-      const award = TIERS[Math.min(phase, TIERS.length - 1)];
+    // Correct — bank points (more for an earlier song) and reveal.
+    if (choice === round.genre) {
+      const award = TIERS[Math.min(clipIdx, TIERS.length - 1)];
+      answered = true;
+      clearTimers(); stopAudio();
+      Array.from(optionsEl.querySelectorAll('.option')).forEach((b) => {
+        b.disabled = true;
+        if (b.textContent === round.genre) b.classList.add('correct');
+        else if (!b.classList.contains('eliminated')) b.classList.add('dim');
+      });
       chapterScore += award; streak += 1;
       if (streak > best) { best = streak; localStorage.setItem('rt_best', String(best)); }
       playChime(); updateFooter();
       setTimeout(() => showReveal(round, true, award), 550);
+      return;
+    }
+
+    // Wrong — cross out the button and play the next song on the playbar.
+    playBuzz();
+    btn.classList.add('wrong', 'eliminated');
+    btn.disabled = true;
+
+    if (clipIdx < clips.length - 1) {
+      playClipAt(clipIdx + 1);
     } else {
-      // Wrong — flash the right answer, then skip to the next track.
-      streak = 0; playBuzz(); updateFooter();
-      setTimeout(() => nextRound(), 1100);
+      // out of songs — it's a miss; reveal the answer.
+      answered = true;
+      clearTimers(); stopAudio();
+      const ans = Array.from(optionsEl.querySelectorAll('.option')).find((b) => b.textContent === round.genre);
+      if (ans) ans.classList.add('correct');
+      streak = 0; updateFooter();
+      setTimeout(() => showReveal(round, false, 0), 900);
     }
   }
 
@@ -608,7 +605,7 @@
   player.addEventListener('ended', () => eqEl.classList.add('paused'));
   player.addEventListener('error', () => {
     // a clip URL failed — jump to the next available clip if there is one
-    if (!answered && clips.length > 1 && clipIdx < clips.length - 1) playClip(clipIdx + 1);
+    if (!answered && clips.length > 1 && clipIdx < clips.length - 1) playClipAt(clipIdx + 1);
   });
 
   // ---- Init ----
