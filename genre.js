@@ -219,6 +219,16 @@
     sahouse: ['#FF5CA0', '#36E27B'], hiphop: ['#FFC23C', '#FF5C7A'],
   };
 
+  // Believable but INVENTED sub-genres — at least one appears as a decoy in
+  // every question (kept distinct from the real genres above).
+  const FAKE_GENRES = [
+    'Liquid Step', 'Neon Dub', 'Velvet Bass', 'Chrome Step', 'Static Garage', 'Echo Funk',
+    'Plasma House', 'Crystal Techno', 'Shadow Step', 'Drift House', 'Cobalt Wave', 'Fuzz Pop',
+    'Iron Funk', 'Midnight Garage', 'Ghost Step', 'Mirror Pop', 'Haze Wave', 'Volt Techno',
+    'Onyx Drill', 'Pulse Garage', 'Dusk Soul', 'Frost Bass', 'Ember Trap', 'Slate House',
+    'Glass Funk', 'Halcyon Bass', 'Cinder Punk', 'Tidal Techno',
+  ].filter((f) => ALL_GENRES.indexOf(f) < 0);
+
   const CLIP_MS = 20000;       // each clip plays 20s
   const CLIPS = 3;             // up to 3 clips per round
   const TIERS = [1000, 600, 300]; // points by phase: 4 options / 3 / 2
@@ -250,7 +260,6 @@
   const chTitle = document.getElementById('chTitle');
   const chScene = document.getElementById('chScene');
   const chIntro = document.getElementById('chIntro');
-  const clipTag = document.getElementById('clipTag');
   const pbFill = document.getElementById('pbFill');
   const playStateEl = document.getElementById('playState');
   const eqEl = document.getElementById('eq');
@@ -286,7 +295,6 @@
   let clipIdx = 0;
   let timers = [];             // clip-advance + option-removal timeouts
   let phase = 0;               // 0 = 4 options, 1 = 3 options, 2 = 2 options
-  let wrongAttempts = 0;       // wrong guesses this round (2 = skip on)
   let roundGenre = null;
   let currentMeta = null;
 
@@ -374,7 +382,6 @@
   function playClip(i) {
     clipIdx = i;
     currentMeta = clips[i];
-    clipTag.textContent = 'Clip ' + (i + 1) + ' of ' + clips.length;
     try { player.src = clips[i].previewUrl; player.currentTime = 0; const p = player.play(); if (p && p.catch) p.catch(() => {}); } catch (_) {}
     eqEl.classList.remove('paused');
     if (!answered) playStateEl.textContent = 'Listening…';
@@ -392,7 +399,6 @@
 
   function startSequence() {
     phase = 0;
-    wrongAttempts = 0;
     const windowMs = clips.length * CLIP_MS;
 
     // playbar fill across the whole window
@@ -489,12 +495,26 @@
     startSequence();
   }
 
+  function pickFake(exclude) {
+    const avail = shuffle(FAKE_GENRES.filter((f) => exclude.indexOf(f) < 0));
+    return avail.length ? avail[0] : 'Neon Step';
+  }
+
   function renderOptions(round, ch) {
     roundGenre = round.genre;
     const siblings = shuffle(ch.rounds.map((r) => r.genre).filter((g) => g !== round.genre));
     const outside = shuffle(ALL_GENRES.filter((g) => g !== round.genre && siblings.indexOf(g) < 0));
-    const distractors = siblings.concat(outside).slice(0, 3);
-    const choices = shuffle([round.genre].concat(distractors));
+
+    // 2 real decoys (one tough sibling + one from the wider pool, for variety)
+    const reals = [];
+    if (siblings.length) reals.push(siblings[0]);
+    for (let i = 0; i < outside.length && reals.length < 2; i++) reals.push(outside[i]);
+    while (reals.length < 2 && siblings.length > reals.length) reals.push(siblings[reals.length]);
+
+    // …plus at least one believable INVENTED genre
+    const fake = pickFake([round.genre].concat(reals));
+    const choices = shuffle([round.genre].concat(reals.slice(0, 2)).concat(fake));
+
     optionsEl.innerHTML = '';
     choices.forEach((g) => {
       const btn = document.createElement('button');
@@ -506,41 +526,27 @@
 
   function handleGuess(choice, round, btn) {
     if (answered) return;
+    answered = true;
+    clearTimers(); stopAudio();
 
-    // Correct — bank points and reveal.
-    if (choice === round.genre) {
+    const correct = choice === round.genre;
+    Array.from(optionsEl.querySelectorAll('.option')).forEach((b) => {
+      b.disabled = true;
+      if (b.textContent === round.genre) b.classList.add('correct');
+      else if (b === btn) b.classList.add('wrong');
+      else if (!b.classList.contains('eliminated')) b.classList.add('dim');
+    });
+
+    if (correct) {
       const award = TIERS[Math.min(phase, TIERS.length - 1)];
-      answered = true;
-      clearTimers(); stopAudio();
-      Array.from(optionsEl.querySelectorAll('.option')).forEach((b) => {
-        b.disabled = true;
-        if (b.textContent === round.genre) b.classList.add('correct');
-        else if (!b.classList.contains('eliminated')) b.classList.add('dim');
-      });
       chapterScore += award; streak += 1;
       if (streak > best) { best = streak; localStorage.setItem('rt_best', String(best)); }
       playChime(); updateFooter();
       setTimeout(() => showReveal(round, true, award), 550);
-      return;
-    }
-
-    // Wrong.
-    wrongAttempts += 1;
-    playBuzz();
-    btn.classList.add('wrong');
-    btn.disabled = true;
-
-    if (wrongAttempts >= 2) {
-      // Second strike — miss, reveal the answer and move on.
-      answered = true;
-      clearTimers(); stopAudio();
-      const ans = Array.from(optionsEl.querySelectorAll('.option')).find((b) => b.textContent === round.genre);
-      if (ans) ans.classList.add('correct');
-      streak = 0; updateFooter();
-      setTimeout(() => showReveal(round, false, 0), 700);
     } else {
-      // First strike — cross it out and let them try again.
-      setTimeout(() => { btn.classList.add('eliminated'); }, 320);
+      // Wrong — flash the right answer, then skip to the next track.
+      streak = 0; playBuzz(); updateFooter();
+      setTimeout(() => nextRound(), 1100);
     }
   }
 
