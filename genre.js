@@ -277,6 +277,7 @@
   let clipIdx = 0;
   let timers = [];             // clip-advance + option-removal timeouts
   let phase = 0;               // 0 = 4 options, 1 = 3 options, 2 = 2 options
+  let wrongAttempts = 0;       // wrong guesses this round (2 = skip on)
   let roundGenre = null;
   let currentMeta = null;
 
@@ -381,6 +382,7 @@
 
   function startSequence() {
     phase = 0;
+    wrongAttempts = 0;
     const windowMs = clips.length * CLIP_MS;
 
     // playbar fill across the whole window
@@ -491,26 +493,43 @@
 
   function handleGuess(choice, round, btn) {
     if (answered) return;
-    const award = TIERS[Math.min(phase, TIERS.length - 1)];
-    answered = true;
-    clearTimers(); stopAudio();
 
-    const correct = choice === round.genre;
-    Array.from(optionsEl.querySelectorAll('.option')).forEach((b) => {
-      b.disabled = true;
-      if (b.textContent === round.genre) b.classList.add('correct');
-      else if (b === btn) b.classList.add('wrong');
-      else b.classList.add('dim');
-    });
-
-    let gained = 0;
-    if (correct) {
-      gained = award; chapterScore += award; streak += 1;
+    // Correct — bank points and reveal.
+    if (choice === round.genre) {
+      const award = TIERS[Math.min(phase, TIERS.length - 1)];
+      answered = true;
+      clearTimers(); stopAudio();
+      Array.from(optionsEl.querySelectorAll('.option')).forEach((b) => {
+        b.disabled = true;
+        if (b.textContent === round.genre) b.classList.add('correct');
+        else if (!b.classList.contains('eliminated')) b.classList.add('dim');
+      });
+      chapterScore += award; streak += 1;
       if (streak > best) { best = streak; localStorage.setItem('rt_best', String(best)); }
-      playChime();
-    } else { streak = 0; playBuzz(); }
-    updateFooter();
-    setTimeout(() => showReveal(round, correct, gained), 550);
+      playChime(); updateFooter();
+      setTimeout(() => showReveal(round, true, award), 550);
+      return;
+    }
+
+    // Wrong.
+    wrongAttempts += 1;
+    playBuzz();
+    btn.classList.add('wrong');
+    btn.disabled = true;
+
+    if (wrongAttempts >= 2) {
+      // Second strike — miss, reveal the answer and move on.
+      answered = true;
+      clearTimers(); stopAudio();
+      const ans = Array.from(optionsEl.querySelectorAll('.option')).find((b) => b.textContent === round.genre);
+      if (ans) ans.classList.add('correct');
+      streak = 0; updateFooter();
+      setTimeout(() => showReveal(round, false, 0), 700);
+    } else {
+      // First strike — remove that option and let them try again.
+      pbHint.textContent = 'Wrong — try again';
+      setTimeout(() => { btn.classList.add('eliminated'); }, 320);
+    }
   }
 
   function showReveal(round, correct, gained) {
