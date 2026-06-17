@@ -266,7 +266,6 @@
   const chBeginBtn = document.getElementById('chBeginBtn');
   const retryBtn = document.getElementById('retryBtn');
   const skipBtn = document.getElementById('skipBtn');
-  const replayBtn = document.getElementById('replayBtn');
   const nextBtn = document.getElementById('nextBtn');
   const ceBackBtn = document.getElementById('ceBackBtn');
 
@@ -275,7 +274,6 @@
   const chScene = document.getElementById('chScene');
   const chIntro = document.getElementById('chIntro');
   const pbFill = document.getElementById('pbFill');
-  const playStateEl = document.getElementById('playState');
   const eqEl = document.getElementById('eq');
   const optionsEl = document.getElementById('options');
   const errorText = document.getElementById('errorText');
@@ -399,7 +397,6 @@
     currentMeta = clips[i];
     try { player.src = clips[i].previewUrl; player.currentTime = 0; const p = player.play(); if (p && p.catch) p.catch(() => {}); } catch (_) {}
     eqEl.classList.remove('paused');
-    if (!answered) playStateEl.textContent = 'Listening…';
 
     const N = clips.length;
     pbFill.style.transition = 'none';
@@ -415,14 +412,10 @@
   function onClipEnd() {
     if (answered) return;
     if (clipIdx < clips.length - 1) playClipAt(clipIdx + 1);
-    else { stopAudio(); playStateEl.textContent = 'Make your guess'; }
+    else stopAudio();
   }
 
   function startSequence() { playClipAt(0); }
-
-  function replayClip() {
-    try { player.currentTime = 0; const p = player.play(); if (p && p.catch) p.catch(() => {}); eqEl.classList.remove('paused'); } catch (_) {}
-  }
 
   // ====================================================================
   //  Flow
@@ -490,7 +483,6 @@
 
     renderOptions(round, ch);
     show('round');
-    playStateEl.textContent = 'Listening…';
     startSequence();
   }
 
@@ -596,7 +588,6 @@
   chBackBtn.addEventListener('click', goHome);
   retryBtn.addEventListener('click', () => { ensureAudioCtx(); loadRound(); });
   skipBtn.addEventListener('click', () => { ensureAudioCtx(); nextRound(); });
-  replayBtn.addEventListener('click', () => { ensureAudioCtx(); replayClip(); });
   nextBtn.addEventListener('click', () => { ensureAudioCtx(); nextRound(); });
   ceBackBtn.addEventListener('click', goHome);
 
