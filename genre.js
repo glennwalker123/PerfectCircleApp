@@ -515,7 +515,7 @@
       const cc = CHAPTER_COLORS[ch.id] || HOME_COLORS;
       card.style.setProperty('--cc1', cc[0]); card.style.setProperty('--cc2', cc[1]);
       card.appendChild(num); card.appendChild(body); card.appendChild(bv);
-      card.addEventListener('click', () => { ensureAudioCtx(); openChapter(i); });
+      card.addEventListener('click', () => { ensureAudioCtx(); location.hash = ch.id; });
       chapterList.appendChild(card);
     });
   }
@@ -663,14 +663,29 @@
   }
 
   // ====================================================================
+  //  Deep linking — the URL hash (#chapter-id) routes to a chapter.
+  // ====================================================================
+  function navHome() {
+    if (location.hash) history.pushState(null, '', location.pathname + location.search);
+    goHome();
+  }
+  function applyRoute() {
+    const id = decodeURIComponent((location.hash || '').replace(/^#\/?/, ''));
+    const i = CHAPTERS.findIndex((c) => c.id === id);
+    if (i >= 0) openChapter(i); else goHome();
+  }
+
+  // ====================================================================
   //  Events
   // ====================================================================
   chBeginBtn.addEventListener('click', () => { ensureAudioCtx(); loadRound(); });
-  chBackBtn.addEventListener('click', goHome);
+  chBackBtn.addEventListener('click', navHome);
   retryBtn.addEventListener('click', () => { ensureAudioCtx(); loadRound(); });
   skipBtn.addEventListener('click', () => { ensureAudioCtx(); nextRound(); });
   nextBtn.addEventListener('click', () => { ensureAudioCtx(); nextRound(); });
-  ceBackBtn.addEventListener('click', goHome);
+  ceBackBtn.addEventListener('click', navHome);
+  window.addEventListener('hashchange', applyRoute);
+  window.addEventListener('popstate', applyRoute);
 
   player.addEventListener('playing', () => eqEl.classList.remove('paused'));
   player.addEventListener('pause', () => eqEl.classList.add('paused'));
@@ -682,7 +697,6 @@
 
   // ---- Init ----
   setTheme(HOME_COLORS);
-  buildHome();
   updateFooter();
-  show('home');
+  applyRoute();   // deep-link straight to a chapter if the hash names one
 })();
