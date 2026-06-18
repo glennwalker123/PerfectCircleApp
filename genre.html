@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="genre.css?v=14" />
+<link rel="stylesheet" href="genre.css?v=15" />
 </head>
 <body>
   <div class="app">
@@ -26,6 +26,21 @@
       <section class="view view-home" id="vHome">
         <span class="kicker">Pick a chapter</span>
         <div class="chapter-list" id="chapterList"></div>
+        <button class="btn btn-ghost" id="helpBtn">How to play</button>
+      </section>
+
+      <!-- How to play -->
+      <section class="view" id="vHelp" hidden>
+        <span class="kicker">How to play</span>
+        <h2 class="chapter-title">ROOTS</h2>
+        <ol class="howto">
+          <li>Pick a <b>chapter</b> — a connected family of sub-genres.</li>
+          <li>You'll hear up to <b>3 song clips</b>. Tap the sub-genre you think it is.</li>
+          <li>Wrong guess? It gets <b>crossed out</b> and the next clip plays — keep going.</li>
+          <li>Answer on the <b>first clip</b> for the most points: <b>1000 → 600 → 300</b>.</li>
+          <li>Watch out — <b>one option is always made up</b>.</li>
+        </ol>
+        <button class="btn btn-big" id="helpDoneBtn">Got it</button>
       </section>
 
       <!-- Chapter intro -->
@@ -99,6 +114,6 @@
   </div>
 
   <audio id="player" preload="auto"></audio>
-  <script src="genre.js?v=14"></script>
+  <script src="genre.js?v=15"></script>
 </body>
 </html>

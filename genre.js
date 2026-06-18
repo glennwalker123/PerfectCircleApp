@@ -318,6 +318,7 @@
   // ====================================================================
   const views = {
     home: document.getElementById('vHome'),
+    help: document.getElementById('vHelp'),
     chapter: document.getElementById('vChapter'),
     loading: document.getElementById('vLoading'),
     error: document.getElementById('vError'),
@@ -331,6 +332,8 @@
   const chBeginBtn = document.getElementById('chBeginBtn');
   const retryBtn = document.getElementById('retryBtn');
   const skipBtn = document.getElementById('skipBtn');
+  const helpBtn = document.getElementById('helpBtn');
+  const helpDoneBtn = document.getElementById('helpDoneBtn');
   const nextBtn = document.getElementById('nextBtn');
   const ceBackBtn = document.getElementById('ceBackBtn');
 
@@ -684,6 +687,8 @@
   skipBtn.addEventListener('click', () => { ensureAudioCtx(); nextRound(); });
   nextBtn.addEventListener('click', () => { ensureAudioCtx(); nextRound(); });
   ceBackBtn.addEventListener('click', navHome);
+  helpBtn.addEventListener('click', () => show('help'));
+  helpDoneBtn.addEventListener('click', () => { localStorage.setItem('rt_help', '1'); goHome(); });
   window.addEventListener('hashchange', applyRoute);
   window.addEventListener('popstate', applyRoute);
 
@@ -698,5 +703,6 @@
   // ---- Init ----
   setTheme(HOME_COLORS);
   updateFooter();
-  applyRoute();   // deep-link straight to a chapter if the hash names one
+  if (!location.hash && !localStorage.getItem('rt_help')) { buildHome(); show('help'); }
+  else applyRoute();   // deep-link straight to a chapter if the hash names one
 })();

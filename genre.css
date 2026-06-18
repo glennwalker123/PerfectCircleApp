@@ -44,6 +44,15 @@ html, body {
 .lead { margin: 0; font-size: 17px; line-height: 1.5; font-weight: 500; color: var(--ink); max-width: 420px; }
 .kicker { font-family: var(--display); font-size: 13px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; color: var(--ink-soft); }
 
+.howto { list-style: none; counter-reset: step; margin: 0; padding: 0; max-width: 420px; width: 100%;
+  display: flex; flex-direction: column; gap: 12px; text-align: left; }
+.howto li { position: relative; padding-left: 40px; font-size: 15px; line-height: 1.45; color: var(--ink); }
+.howto li b { font-weight: 700; }
+.howto li::before { counter-increment: step; content: counter(step);
+  position: absolute; left: 0; top: -2px; width: 26px; height: 26px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--ink); color: var(--c2); font-family: var(--display); font-weight: 700; font-size: 14px; }
+
 /* ---- Home: colourful chapter tiles ---- */
 .chapter-list { width: 100%; max-width: 520px; display: flex; flex-direction: column; gap: 12px; padding: 2px 0 10px; }
 .ch-card {
