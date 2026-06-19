@@ -286,6 +286,108 @@
           tracks: [ {t:"海闊天空",a:"Beyond"},{t:"Monica",a:"Leslie Cheung"},{t:"親密愛人",a:"Sandy Lam"},{t:"K歌之王",a:"Eason Chan"} ] },
       ],
     },
+    {
+      id: 'pop', title: 'Pop', scene: 'Worldwide · 1960–2020',
+      intro: 'The mainstream — the most-heard music on earth, evolving hooks from the radio era to the streaming age.',
+      outro: 'Pop magpies everything: soul, disco, synths and hip-hop all funnel into the charts.',
+      rounds: [
+        { genre: 'Brill Building Pop', from: ["Rock 'n' Roll", 'Doo-Wop'], note: 'Professionally-written early-’60s hit factory pop.',
+          tracks: [ {t:"Be My Baby",a:"The Ronettes"},{t:"Will You Love Me Tomorrow",a:"The Shirelles"},{t:"The Loco-Motion",a:"Little Eva"},{t:"Walk On By",a:"Dionne Warwick"} ] },
+        { genre: 'Dance-Pop', from: ['Disco', 'Pop'], note: 'Up-tempo, beat-driven pop built for radio and the floor.',
+          tracks: [ {t:"Into the Groove",a:"Madonna"},{t:"I Wanna Dance with Somebody",a:"Whitney Houston"},{t:"Can't Get You Out of My Head",a:"Kylie Minogue"},{t:"Hung Up",a:"Madonna"} ] },
+        { genre: 'Teen Pop', from: ['Dance-Pop'], note: 'Bubblegum hooks aimed squarely at the charts, late-’90s boom.',
+          tracks: [ {t:"...Baby One More Time",a:"Britney Spears"},{t:"Bye Bye Bye",a:"*NSYNC"},{t:"I Want It That Way",a:"Backstreet Boys"},{t:"Wannabe",a:"Spice Girls"} ] },
+        { genre: 'Electropop', from: ['Synth-Pop', 'Dance-Pop'], note: 'Pop built on glossy synths and drum machines.',
+          tracks: [ {t:"Just Dance",a:"Lady Gaga"},{t:"Dancing On My Own",a:"Robyn"},{t:"Bulletproof",a:"La Roux"},{t:"The Mother We Share",a:"CHVRCHES"} ] },
+        { genre: 'Art Pop', from: ['Pop', 'Experimental'], note: 'Pop pushed toward the experimental and avant-garde.',
+          tracks: [ {t:"Running Up That Hill",a:"Kate Bush"},{t:"Army of Me",a:"Björk"},{t:"Two Weeks",a:"FKA twigs"},{t:"Los Ageless",a:"St. Vincent"} ] },
+      ],
+    },
+    {
+      id: 'soul', title: 'R&B & Soul', scene: 'USA · 1960–2015',
+      intro: 'Gospel feeling meeting rhythm & blues — and its journey through funk to modern R&B.',
+      outro: 'Soul and R&B underpin pop and hip-hop, from Motown to the alt-R&B of today.',
+      rounds: [
+        { genre: 'Soul', from: ['Gospel', 'Rhythm & Blues'], note: 'Gospel fervour secularised — Motown and Stax in their pomp.',
+          tracks: [ {t:"My Girl",a:"The Temptations"},{t:"Ain't No Mountain High Enough",a:"Marvin Gaye & Tammi Terrell"},{t:"Respect",a:"Aretha Franklin"},{t:"(Sittin' On) The Dock of the Bay",a:"Otis Redding"} ] },
+        { genre: 'Funk', from: ['Soul'], note: 'Soul stripped to the rhythm — syncopated, bass-heavy and relentless.',
+          tracks: [ {t:"Super Bad",a:"James Brown"},{t:"Give Up the Funk",a:"Parliament"},{t:"Thank You (Falettinme Be Mice Elf Agin)",a:"Sly & The Family Stone"},{t:"Cissy Strut",a:"The Meters"} ] },
+        { genre: 'New Jack Swing', from: ['Funk', 'Hip-Hop'], note: 'Late-’80s R&B built on swung hip-hop drum machines.',
+          tracks: [ {t:"My Prerogative",a:"Bobby Brown"},{t:"Poison",a:"Bell Biv DeVoe"},{t:"Groove Me",a:"Guy"},{t:"Motownphilly",a:"Boyz II Men"} ] },
+        { genre: 'Neo-Soul', from: ['Soul', 'Hip-Hop'], note: 'Live, organic R&B revived with a hip-hop sensibility.',
+          tracks: [ {t:"Brown Sugar",a:"D'Angelo"},{t:"On & On",a:"Erykah Badu"},{t:"Doo Wop (That Thing)",a:"Lauryn Hill"},{t:"Ascension",a:"Maxwell"} ] },
+        { genre: 'Contemporary R&B', from: ['New Jack Swing', 'Hip-Hop'], note: 'Polished, hip-hop-fused R&B — the modern chart sound.',
+          tracks: [ {t:"U Got It Bad",a:"Usher"},{t:"Are You That Somebody?",a:"Aaliyah"},{t:"No Scrubs",a:"TLC"},{t:"Earned It",a:"The Weeknd"} ] },
+      ],
+    },
+    {
+      id: 'country', title: 'Country', scene: 'USA · 1945–2020',
+      intro: 'America’s storytelling music — from honky-tonk bars to stadium country-pop.',
+      outro: 'Country keeps absorbing pop and hip-hop while holding onto its twang.',
+      rounds: [
+        { genre: 'Honky-Tonk', from: ['Western Swing', 'Folk'], note: 'Barroom country of pedal steel, fiddle and heartbreak.',
+          tracks: [ {t:"Your Cheatin' Heart",a:"Hank Williams"},{t:"Crazy",a:"Patsy Cline"},{t:"He Stopped Loving Her Today",a:"George Jones"},{t:"Coal Miner's Daughter",a:"Loretta Lynn"} ] },
+        { genre: 'Outlaw Country', from: ['Honky-Tonk'], note: 'Rougher, rebel country that broke from Nashville’s polish.',
+          tracks: [ {t:"On the Road Again",a:"Willie Nelson"},{t:"Folsom Prison Blues",a:"Johnny Cash"},{t:"Mama Tried",a:"Merle Haggard"},{t:"Luckenbach, Texas",a:"Waylon Jennings"} ] },
+        { genre: 'Country Pop', from: ['Honky-Tonk', 'Pop'], note: 'Country with radio-pop polish and crossover hooks.',
+          tracks: [ {t:"Jolene",a:"Dolly Parton"},{t:"Man! I Feel Like a Woman!",a:"Shania Twain"},{t:"Friends in Low Places",a:"Garth Brooks"},{t:"Love Story",a:"Taylor Swift"} ] },
+        { genre: 'Bro-Country', from: ['Country Pop', 'Hip-Hop'], note: '2010s party country with trucks, beats and hip-hop swagger.',
+          tracks: [ {t:"Cruise",a:"Florida Georgia Line"},{t:"Country Girl (Shake It for Me)",a:"Luke Bryan"},{t:"Body Like a Back Road",a:"Sam Hunt"},{t:"Dirt Road Anthem",a:"Jason Aldean"} ] },
+        { genre: 'Alt-Country', from: ['Outlaw Country', 'Folk Revival'], note: 'Roots-rock country for the indie crowd — Americana.',
+          tracks: [ {t:"California Stars",a:"Wilco"},{t:"Whiskey Bottle",a:"Uncle Tupelo"},{t:"Car Wheels on a Gravel Road",a:"Lucinda Williams"},{t:"Cover Me Up",a:"Jason Isbell"} ] },
+      ],
+    },
+    {
+      id: 'edm', title: 'EDM & Festival', scene: 'Worldwide · 1990–2020',
+      intro: 'The big-tent side of dance music — built for festivals, drops and main stages.',
+      outro: 'Trance, electro and big-room turned dance music into stadium pop.',
+      rounds: [
+        { genre: 'Trance', from: ['Techno', 'Acid House'], note: 'Hypnotic, euphoric, melodic and built for the big build.',
+          tracks: [ {t:"Children",a:"Robert Miles"},{t:"9 PM (Till I Come)",a:"ATB"},{t:"Adagio for Strings",a:"Tiësto"},{t:"For an Angel",a:"Paul van Dyk"} ] },
+        { genre: 'Electro House', from: ['House'], note: 'Big, distorted synth-lead house for the late 2000s.',
+          tracks: [ {t:"One More Time",a:"Daft Punk"},{t:"D.A.N.C.E.",a:"Justice"},{t:"Ghosts 'n' Stuff",a:"deadmau5"},{t:"When Love Takes Over",a:"David Guetta"} ] },
+        { genre: 'Big Room', from: ['Electro House', 'Trance'], note: 'Festival EDM: huge drops, simple leads, main-stage energy.',
+          tracks: [ {t:"Don't You Worry Child",a:"Swedish House Mafia"},{t:"Levels",a:"Avicii"},{t:"Animals",a:"Martin Garrix"},{t:"Summer",a:"Calvin Harris"} ] },
+        { genre: 'Future Bass', from: ['Dubstep', 'Trap'], note: 'Lush, pitched-up synth chords and trap-tinged drums.',
+          tracks: [ {t:"Never Be Like You",a:"Flume"},{t:"Alone",a:"Marshmello"},{t:"Say My Name",a:"ODESZA"},{t:"Light",a:"San Holo"} ] },
+        { genre: 'Hardstyle', from: ['Gabber', 'Trance'], note: 'Hard kicks and screeching leads — the toughest festival sound.',
+          tracks: [ {t:"Dragonborn",a:"Headhunterz"},{t:"FTS",a:"Showtek"},{t:"Hardstyle Mafia",a:"Da Tweekaz"},{t:"Lose My Mind",a:"Brennan Heart"} ] },
+      ],
+    },
+    {
+      id: 'jazz', title: 'Jazz', scene: 'USA · 1930–1975',
+      intro: 'America’s great art form — improvisation evolving from the swing era to fusion.',
+      outro: 'Jazz harmony and improvisation seep into soul, hip-hop and beyond.',
+      rounds: [
+        { genre: 'Swing', from: ['Blues', 'Ragtime'], note: 'Big-band dance jazz of the 1930s–40s.',
+          tracks: [ {t:"It Don't Mean a Thing (If It Ain't Got That Swing)",a:"Duke Ellington"},{t:"Sing, Sing, Sing",a:"Benny Goodman"},{t:"One O'Clock Jump",a:"Count Basie"},{t:"In the Mood",a:"Glenn Miller"} ] },
+        { genre: 'Bebop', from: ['Swing'], note: 'Fast, virtuosic, harmonically daring small-group jazz.',
+          tracks: [ {t:"Ornithology",a:"Charlie Parker"},{t:"A Night in Tunisia",a:"Dizzy Gillespie"},{t:"'Round Midnight",a:"Thelonious Monk"},{t:"Salt Peanuts",a:"Dizzy Gillespie"} ] },
+        { genre: 'Cool Jazz', from: ['Bebop'], note: 'Relaxed, restrained, melodic jazz — the West Coast sound.',
+          tracks: [ {t:"So What",a:"Miles Davis"},{t:"Take Five",a:"The Dave Brubeck Quartet"},{t:"My Funny Valentine",a:"Chet Baker"},{t:"Blue in Green",a:"Miles Davis"} ] },
+        { genre: 'Hard Bop', from: ['Bebop'], note: 'Bebop with blues, gospel and soul muscle.',
+          tracks: [ {t:"Moanin'",a:"Art Blakey & The Jazz Messengers"},{t:"Song for My Father",a:"Horace Silver"},{t:"Mercy, Mercy, Mercy",a:"Cannonball Adderley"},{t:"The Sidewinder",a:"Lee Morgan"} ] },
+        { genre: 'Jazz Fusion', from: ['Hard Bop', 'Funk'], note: 'Jazz plugged into rock and funk — electric and exploratory.',
+          tracks: [ {t:"Chameleon",a:"Herbie Hancock"},{t:"Birdland",a:"Weather Report"},{t:"Spain",a:"Chick Corea"},{t:"Red Baron",a:"Billy Cobham"} ] },
+      ],
+    },
+    {
+      id: 'blues', title: 'Blues', scene: 'USA · 1920–1970',
+      intro: 'The taproot of nearly all popular music — twelve bars, bent notes and hard truth.',
+      outro: 'Blues built rock ’n’ roll, R&B and soul — the source of it all.',
+      rounds: [
+        { genre: 'Delta Blues', from: ['Work songs', 'Spirituals'], note: 'Raw, acoustic Mississippi blues — voice and slide guitar.',
+          tracks: [ {t:"Cross Road Blues",a:"Robert Johnson"},{t:"Death Letter",a:"Son House"},{t:"Pony Blues",a:"Charley Patton"},{t:"Devil Got My Woman",a:"Skip James"} ] },
+        { genre: 'Chicago Blues', from: ['Delta Blues'], note: 'Delta blues electrified for the big northern city.',
+          tracks: [ {t:"Hoochie Coochie Man",a:"Muddy Waters"},{t:"Smokestack Lightnin'",a:"Howlin' Wolf"},{t:"Juke",a:"Little Walter"},{t:"Mannish Boy",a:"Muddy Waters"} ] },
+        { genre: 'Electric Blues', from: ['Chicago Blues'], note: 'Amplified, lead-guitar blues — the bridge to rock.',
+          tracks: [ {t:"The Thrill Is Gone",a:"B.B. King"},{t:"Born Under a Bad Sign",a:"Albert King"},{t:"Hide Away",a:"Freddie King"},{t:"Stormy Monday",a:"T-Bone Walker"} ] },
+        { genre: 'Blues Rock', from: ['Electric Blues', "Rock 'n' Roll"], note: 'Blues played loud and heavy by the rock generation.',
+          tracks: [ {t:"(I Can't Get No) Satisfaction",a:"The Rolling Stones"},{t:"Crossroads",a:"Cream"},{t:"Pride and Joy",a:"Stevie Ray Vaughan"},{t:"Born to Be Wild",a:"Steppenwolf"} ] },
+        { genre: 'Jump Blues', from: ['Blues', 'Swing'], note: 'Upbeat, horn-driven blues that helped spawn R&B.',
+          tracks: [ {t:"Choo Choo Ch'Boogie",a:"Louis Jordan"},{t:"Shake, Rattle and Roll",a:"Big Joe Turner"},{t:"Good Rocking Tonight",a:"Wynonie Harris"},{t:"Caldonia",a:"Louis Jordan"} ] },
+      ],
+    },
   ];
 
   // Extra tracks per sub-genre — enlarges each pool so the 3 played clips are
@@ -368,6 +470,8 @@
     sahouse: ['#FF5CA0', '#36E27B'], hiphop: ['#FFC23C', '#FF5C7A'],
     rockfound: ['#FF6B5C', '#FFC23A'], metalx: ['#9AA0B5', '#3A3F55'], folk: ['#E8C57A', '#8FB36B'],
     brazilroots: ['#FFD23F', '#36C97B'], asia: ['#FF6BB0', '#7A6BFF'],
+    pop: ['#FF4DA6', '#FFD23F'], soul: ['#8E5CFF', '#FF6B9D'], country: ['#E8A24A', '#C97B3F'],
+    edm: ['#22E0FF', '#7A4DFF'], jazz: ['#5B8CFF', '#B06BFF'], blues: ['#5BA6FF', '#3A5BC0'],
   };
 
   // Each chapter's broad family. Real decoys are drawn from the SAME family
@@ -377,6 +481,7 @@
     metal: 'metal', metalx: 'metal', rockfound: 'rock',
     soundsystem: 'jamaica', carioca: 'latin', westafrica: 'africa', sahouse: 'house', hiphop: 'hiphop',
     folk: 'folk', brazilroots: 'brazilroots', asia: 'asia',
+    pop: 'pop', soul: 'soul', country: 'country', edm: 'edm', jazz: 'jazz', blues: 'blues',
   };
   const FAMILY_GENRES = {};
   CHAPTERS.forEach((ch) => {
@@ -397,6 +502,12 @@
     folk: ['Hearth Folk', 'Pale Folk', 'River Folk', 'Hollow Folk', 'Birch Folk', 'Briar Folk'],
     brazilroots: ['Soft Samba', 'Rio Bossa', 'Verde Samba', 'Sol Samba', 'Lazy Bossa'],
     asia: ['Neo Seoul', 'Tokyo Wave', 'Pastel Pop', 'Hyper Seoul', 'Shibuya Gold'],
+    pop: ['Glitter Pop', 'Neon Pop', 'Sugar Pop', 'Bubble Pop', 'Velvet Pop', 'Disco Pop'],
+    soul: ['Velvet Soul', 'Smoke Soul', 'Golden Soul', 'Midnight Soul', 'Satin Soul', 'Plush Funk'],
+    country: ['Dust Country', 'Prairie Country', 'Pine Country', 'Saddle Country', 'Creek Country', 'Holler Country'],
+    edm: ['Neon Trance', 'Volt House', 'Hyper Bass', 'Chrome Rave', 'Pulse Trance', 'Laser House'],
+    jazz: ['Velvet Bop', 'Smoke Jazz', 'Indigo Jazz', 'Brass Bop', 'Midnight Swing', 'Cobalt Jazz'],
+    blues: ['Dust Blues', 'Delta Stomp', 'Smoke Blues', 'Bayou Blues', 'Iron Blues', 'Coal Blues'],
   };
 
   const CLIP_MS = 20000;       // each clip plays 20s
