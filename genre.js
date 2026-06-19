@@ -9,7 +9,7 @@
   // ====================================================================
   const CHAPTERS = [
     {
-      id: 'hcc', title: 'The Hardcore Continuum', scene: 'London · 1991–2020',
+      id: 'hcc', title: 'UK Dance & Bass', scene: 'London · 1991–2020',
       intro: 'One unbroken thread of British dance music — each style mutating directly into the next, born on pirate radio and sound systems.',
       outro: 'From rave hardcore to drill, every step here grew straight out of the one before it.',
       rounds: [
@@ -28,7 +28,7 @@
       ],
     },
     {
-      id: 'house', title: 'Four to the Floor', scene: 'Chicago · 1977–2010',
+      id: 'house', title: 'House Music', scene: 'Chicago · 1977–2010',
       intro: 'Disco never died — it was rebuilt on drum machines in Chicago and branched into the deepest, rawest house music.',
       outro: 'Every style here is a child of disco’s steady 4/4 kick, refracted through Chicago’s clubs.',
       rounds: [
@@ -45,7 +45,7 @@
       ],
     },
     {
-      id: 'techno', title: 'The Techno Tree', scene: 'Detroit & beyond · 1985–2010',
+      id: 'techno', title: 'Techno', scene: 'Detroit & beyond · 1985–2010',
       intro: 'Detroit took house’s pulse and made it cold, futurist and purely electronic — then techno splintered into a dozen extremes.',
       outro: 'Acid, dub, minimal, industrial and gabber are all branches of the same Detroit machine-funk.',
       rounds: [
@@ -64,7 +64,7 @@
       ],
     },
     {
-      id: 'punk', title: 'The Punk Tree', scene: 'USA & UK · 1976–2000',
+      id: 'punk', title: 'Punk', scene: 'USA & UK · 1976–2000',
       intro: 'Punk handed music back to anyone with three chords — then split into faster, harder and more emotional offshoots.',
       outro: 'Hardcore, emo, post-hardcore and pop-punk all trace straight back to punk’s year zero.',
       rounds: [
@@ -83,7 +83,7 @@
       ],
     },
     {
-      id: 'afterpunk', title: 'After Punk', scene: 'UK & USA · 1978–1991',
+      id: 'afterpunk', title: 'Post-Punk & New Wave', scene: 'UK & USA · 1978–1991',
       intro: 'The other branch off punk — turned inward, arty and electronic, building the alternative underground.',
       outro: 'Goth, synth-pop and shoegaze all flowered from post-punk and new wave.',
       rounds: [
@@ -100,7 +100,7 @@
       ],
     },
     {
-      id: 'metal', title: 'The Metal Tree', scene: 'Worldwide · 1980–2005',
+      id: 'metal', title: 'Metal', scene: 'Worldwide · 1980–2005',
       intro: 'Heavy metal split into a dense thicket of extremes — each subgenre pushing a different limit of speed, weight or darkness.',
       outro: 'Thrash bred death and black metal; doom slowed it down; nu metal and metalcore dragged it back into the charts.',
       rounds: [
@@ -119,7 +119,7 @@
       ],
     },
     {
-      id: 'soundsystem', title: 'Sound System', scene: 'Jamaica → Latin America · 1962–2010',
+      id: 'soundsystem', title: 'Reggae & Dancehall', scene: 'Jamaica → Latin America · 1962–2010',
       intro: 'Jamaica invented one lineage that conquered the world — and its dembow riddim eventually became the heartbeat of Latin pop.',
       outro: 'Ska to reggaeton: one unbroken sound-system bloodline crossing the Caribbean.',
       rounds: [
@@ -138,7 +138,7 @@
       ],
     },
     {
-      id: 'carioca', title: 'Funk Carioca', scene: 'Brazil · 1989–2020',
+      id: 'carioca', title: 'Brazilian Funk', scene: 'Brazil · 1989–2020',
       intro: 'Miami bass landed in Rio’s favelas and became its own self-feeding lineage of party music.',
       outro: 'Every Brazilian funk style here grew directly out of baile funk’s raw template.',
       rounds: [
@@ -170,7 +170,7 @@
       ],
     },
     {
-      id: 'sahouse', title: 'Township House', scene: 'South Africa · 1994–2022',
+      id: 'sahouse', title: 'South African House', scene: 'South Africa · 1994–2022',
       intro: 'South Africa took imported house and kept bending it — one local lineage from kwaito to the world-conquering amapiano.',
       outro: 'Kwaito, gqom and amapiano are all the same South African house impulse, a generation apart.',
       rounds: [
@@ -183,7 +183,7 @@
       ],
     },
     {
-      id: 'hiphop', title: 'The Hip-Hop Lineage', scene: 'USA · 1979–2015',
+      id: 'hiphop', title: 'Hip-Hop', scene: 'USA · 1979–2015',
       intro: 'From Bronx block parties, one rap lineage branched across America — each regional sound feeding the next.',
       outro: 'Old-school to drill: turntables and sampling reshaped into trap, phonk and beyond.',
       rounds: [
@@ -199,6 +199,91 @@
           tracks: [ { t: 'Close Eyes', a: 'DVRST' }, { t: 'Murder in My Mind', a: 'Kordhell' }, { t: 'Why Not', a: 'Ghostface Playa' } ] },
         { genre: 'Drill', from: ['Trap'], note: 'Chicago’s bleak, ominous offshoot of trap — sparse and menacing.',
           tracks: [ { t: 'Love Sosa', a: 'Chief Keef' }, { t: 'L\'s Anthem', a: 'Lil Durk' }, { t: 'Welcome to the Party', a: 'Pop Smoke' } ] },
+      ],
+    },
+    {
+      id: 'rockfound', title: 'Classic Rock', scene: 'USA & UK · 1955–1975',
+      intro: 'Before punk and metal, rock built its base — from rock ’n’ roll through psychedelia to hard and prog.',
+      outro: 'Every later rock branch — punk, metal, alternative — grew from these foundations.',
+      rounds: [
+        { genre: "Rock 'n' Roll", from: ['Blues', 'Rhythm & Blues'], note: 'Backbeat, guitar and teenage rebellion — R&B crossed over to the mainstream.',
+          tracks: [ {t:"Johnny B. Goode",a:"Chuck Berry"},{t:"Tutti Frutti",a:"Little Richard"},{t:"Jailhouse Rock",a:"Elvis Presley"},{t:"Great Balls of Fire",a:"Jerry Lee Lewis"} ] },
+        { genre: 'Psychedelic Rock', from: ["Rock 'n' Roll", 'Blues Rock'], note: 'Studio experimentation, wah guitar and mind-expansion in the late ’60s.',
+          tracks: [ {t:"Purple Haze",a:"The Jimi Hendrix Experience"},{t:"White Rabbit",a:"Jefferson Airplane"},{t:"Light My Fire",a:"The Doors"},{t:"Sunshine of Your Love",a:"Cream"} ] },
+        { genre: 'Hard Rock', from: ['Psychedelic Rock', 'Blues Rock'], note: 'Louder, heavier, riff-driven rock — the bridge toward metal.',
+          tracks: [ {t:"Whole Lotta Love",a:"Led Zeppelin"},{t:"Smoke on the Water",a:"Deep Purple"},{t:"Back in Black",a:"AC/DC"},{t:"Welcome to the Jungle",a:"Guns N' Roses"} ] },
+        { genre: 'Prog Rock', from: ['Psychedelic Rock'], note: 'Ambitious, complex, conceptual rock with long suites and odd time signatures.',
+          tracks: [ {t:"Money",a:"Pink Floyd"},{t:"Roundabout",a:"Yes"},{t:"Tom Sawyer",a:"Rush"},{t:"21st Century Schizoid Man",a:"King Crimson"} ] },
+        { genre: 'Glam Rock', from: ['Hard Rock'], note: 'Glitter, stomp and androgyny — rock as theatrical pop spectacle.',
+          tracks: [ {t:"Get It On",a:"T. Rex"},{t:"Ziggy Stardust",a:"David Bowie"},{t:"Ballroom Blitz",a:"Sweet"},{t:"Cum On Feel the Noize",a:"Slade"} ] },
+      ],
+    },
+    {
+      id: 'metalx', title: 'Extreme Metal', scene: 'Worldwide · 1985–2010',
+      intro: 'Beyond the core four, metal kept pushing — faster, heavier, weirder and more theatrical.',
+      outro: 'From power metal’s gallop to grindcore’s blast, metal explored every extreme.',
+      rounds: [
+        { genre: 'Power Metal', from: ['Heavy Metal', 'Speed Metal'], note: 'Galloping tempos, soaring vocals and fantasy themes.',
+          tracks: [ {t:"I Want Out",a:"Helloween"},{t:"Through the Fire and Flames",a:"DragonForce"},{t:"The Bard's Song",a:"Blind Guardian"},{t:"Carolus Rex",a:"Sabaton"} ] },
+        { genre: 'Progressive Metal', from: ['Thrash Metal', 'Prog Rock'], note: 'Technical, complex metal with shifting time signatures.',
+          tracks: [ {t:"Pull Me Under",a:"Dream Theater"},{t:"Schism",a:"Tool"},{t:"Blackwater Park",a:"Opeth"},{t:"Blood and Thunder",a:"Mastodon"} ] },
+        { genre: 'Sludge Metal', from: ['Doom Metal', 'Hardcore Punk'], note: 'Slow, filthy, downtuned riffs dragged through the swamp.',
+          tracks: [ {t:"Snakes for the Divine",a:"High on Fire"},{t:"Planets Collide",a:"Crowbar"},{t:"Bleeding Out",a:"Crowbar"},{t:"Aqua Teen",a:"Mastodon"} ] },
+        { genre: 'Grindcore', from: ['Death Metal', 'Hardcore Punk'], note: 'Ultra-short, ultra-fast blasts of noise and fury.',
+          tracks: [ {t:"You Suffer",a:"Napalm Death"},{t:"Suffer the Children",a:"Napalm Death"},{t:"Heartwork",a:"Carcass"},{t:"The Diplomat",a:"Pig Destroyer"} ] },
+        { genre: 'Industrial Metal', from: ['Thrash Metal', 'Industrial Techno'], note: 'Metal welded to machine rhythms and electronic noise.',
+          tracks: [ {t:"Du Hast",a:"Rammstein"},{t:"Wish",a:"Nine Inch Nails"},{t:"Jesus Built My Hotrod",a:"Ministry"},{t:"Spit",a:"KMFDM"} ] },
+      ],
+    },
+    {
+      id: 'folk', title: 'Folk', scene: 'Worldwide · 1940–2015',
+      intro: 'Acoustic storytelling traditions and their modern revivals.',
+      outro: 'Folk’s plainspoken songcraft feeds country, indie and singer-songwriter pop alike.',
+      rounds: [
+        { genre: 'Folk', from: ['Traditional ballads'], note: 'Plainspoken acoustic songs of work, protest and everyday life.',
+          tracks: [ {t:"This Land Is Your Land",a:"Woody Guthrie"},{t:"If I Had a Hammer",a:"Pete Seeger"},{t:"Goodnight, Irene",a:"Lead Belly"},{t:"Worried Man Blues",a:"The Carter Family"} ] },
+        { genre: 'Folk Revival', from: ['Folk', 'Blues'], note: 'The ’60s singer-songwriter wave that turned folk into pop poetry.',
+          tracks: [ {t:"Blowin' in the Wind",a:"Bob Dylan"},{t:"The Sound of Silence",a:"Simon & Garfunkel"},{t:"Big Yellow Taxi",a:"Joni Mitchell"},{t:"Pink Moon",a:"Nick Drake"} ] },
+        { genre: 'Celtic Folk', from: ['Folk'], note: 'Fiddles, pipes and ballads from Ireland and Scotland.',
+          tracks: [ {t:"Whiskey in the Jar",a:"The Dubliners"},{t:"Theme from Harry's Game",a:"Clannad"},{t:"The Foggy Dew",a:"The Chieftains"},{t:"Caledonia",a:"Dougie MacLean"} ] },
+        { genre: 'Bluegrass', from: ['Folk', 'Country'], note: 'Virtuosic banjo, fiddle and high-lonesome harmony from Appalachia.',
+          tracks: [ {t:"Blue Moon of Kentucky",a:"Bill Monroe"},{t:"Foggy Mountain Breakdown",a:"Flatt & Scruggs"},{t:"Man of Constant Sorrow",a:"The Stanley Brothers"},{t:"Rocky Top",a:"The Osborne Brothers"} ] },
+        { genre: 'Indie Folk', from: ['Folk Revival', 'Indie Rock'], note: 'Hushed, layered, introspective folk for the 21st century.',
+          tracks: [ {t:"White Winter Hymnal",a:"Fleet Foxes"},{t:"Skinny Love",a:"Bon Iver"},{t:"Little Lion Man",a:"Mumford & Sons"},{t:"Chicago",a:"Sufjan Stevens"} ] },
+      ],
+    },
+    {
+      id: 'brazilroots', title: 'Samba & Bossa Nova', scene: 'Brazil · 1930–1975',
+      intro: 'Brazil’s acoustic golden age — samba and its sophisticated descendants.',
+      outro: 'Samba, bossa and MPB define Brazilian song and ripple through world music.',
+      rounds: [
+        { genre: 'Samba', from: ['Choro', 'Maxixe'], note: 'Brazil’s national rhythm — syncopated, percussive and irresistible.',
+          tracks: [ {t:"O Mundo é um Moinho",a:"Cartola"},{t:"Deixa a Vida Me Levar",a:"Zeca Pagodinho"},{t:"Vou Festejar",a:"Beth Carvalho"},{t:"Aquarela do Brasil",a:"Ary Barroso"} ] },
+        { genre: 'Bossa Nova', from: ['Samba', 'Jazz'], note: 'Samba softened with cool jazz harmony and whispered vocals.',
+          tracks: [ {t:"Garota de Ipanema",a:"Stan Getz & João Gilberto"},{t:"Chega de Saudade",a:"João Gilberto"},{t:"Wave",a:"Antônio Carlos Jobim"},{t:"Mas Que Nada",a:"Sérgio Mendes"} ] },
+        { genre: 'MPB', from: ['Bossa Nova', 'Samba'], note: 'Música Popular Brasileira — Brazil’s sophisticated post-bossa songwriting.',
+          tracks: [ {t:"Águas de Março",a:"Elis Regina"},{t:"Como Nossos Pais",a:"Elis Regina"},{t:"Travessia",a:"Milton Nascimento"},{t:"Construção",a:"Chico Buarque"} ] },
+        { genre: 'Tropicália', from: ['Bossa Nova', 'Psychedelic Rock'], note: 'The late-’60s avant-garde fusion of Brazilian song and psych rock.',
+          tracks: [ {t:"A Minha Menina",a:"Os Mutantes"},{t:"Tropicália",a:"Caetano Veloso"},{t:"Baby",a:"Gal Costa"},{t:"Panis et Circenses",a:"Os Mutantes"} ] },
+        { genre: 'Forró', from: ['Baião'], note: 'Northeastern dance music driven by accordion, triangle and zabumba.',
+          tracks: [ {t:"Asa Branca",a:"Luiz Gonzaga"},{t:"Xote dos Milagres",a:"Falamansa"},{t:"Eu Só Quero Um Xodó",a:"Dominguinhos"},{t:"Anunciação",a:"Alceu Valença"} ] },
+      ],
+    },
+    {
+      id: 'asia', title: 'Asian Pop', scene: 'East Asia · 1980–2020',
+      intro: 'Pop powerhouses from Tokyo to Seoul to Hong Kong.',
+      outro: 'From city pop to K-pop, East Asian pop now sets global trends.',
+      rounds: [
+        { genre: 'City Pop', from: ['Funk', 'Jazz Fusion', 'Disco'], note: 'Glossy, urban Japanese pop of the ’80s boom years.',
+          tracks: [ {t:"Ride on Time",a:"Tatsuro Yamashita"},{t:"Plastic Love",a:"Mariya Takeuchi"},{t:"Last Summer Whisper",a:"Anri"},{t:"Stay with Me",a:"Miki Matsubara"} ] },
+        { genre: 'J-Pop', from: ['Pop', 'City Pop'], note: 'Japan’s mainstream pop — bright, polished and hook-driven.',
+          tracks: [ {t:"First Love",a:"Hikaru Utada"},{t:"PONPONPON",a:"Kyary Pamyu Pamyu"},{t:"Polyrhythm",a:"Perfume"},{t:"Can You Celebrate?",a:"Namie Amuro"} ] },
+        { genre: 'K-Pop', from: ['Pop', 'Hip-Hop', 'J-Pop'], note: 'Korea’s slick, choreographed idol pop — now a global force.',
+          tracks: [ {t:"Dynamite",a:"BTS"},{t:"DDU-DU DDU-DU",a:"BLACKPINK"},{t:"Gangnam Style",a:"PSY"},{t:"Gee",a:"Girls' Generation"} ] },
+        { genre: 'Mandopop', from: ['Pop', 'Cantopop'], note: 'Mandarin-language pop balladry and R&B from Taiwan and China.',
+          tracks: [ {t:"The Moon Represents My Heart",a:"Teresa Teng"},{t:"Qing Hua Ci",a:"Jay Chou"},{t:"Red Bean",a:"Faye Wong"},{t:"Long Juan Feng",a:"Jay Chou"} ] },
+        { genre: 'Cantopop', from: ['Pop', 'Shidaiqu'], note: 'Cantonese pop from Hong Kong’s ’80s–’90s golden age.',
+          tracks: [ {t:"海闊天空",a:"Beyond"},{t:"Monica",a:"Leslie Cheung"},{t:"親密愛人",a:"Sandy Lam"},{t:"K歌之王",a:"Eason Chan"} ] },
       ],
     },
   ];
@@ -281,14 +366,17 @@
     punk: ['#FF5C5C', '#FFB03A'], afterpunk: ['#B06BFF', '#FF7AD6'], metal: ['#AEB4C6', '#565B72'],
     soundsystem: ['#2BD96B', '#FFD23F'], carioca: ['#22D3FF', '#FFE14D'], westafrica: ['#FF8A3C', '#FFCE3C'],
     sahouse: ['#FF5CA0', '#36E27B'], hiphop: ['#FFC23C', '#FF5C7A'],
+    rockfound: ['#FF6B5C', '#FFC23A'], metalx: ['#9AA0B5', '#3A3F55'], folk: ['#E8C57A', '#8FB36B'],
+    brazilroots: ['#FFD23F', '#36C97B'], asia: ['#FF6BB0', '#7A6BFF'],
   };
 
   // Each chapter's broad family. Real decoys are drawn from the SAME family
   // so they stay believable (no ska-punk turning up in a hip-hop question).
   const CHAPTER_FAM = {
     hcc: 'uk', house: 'house', techno: 'house', punk: 'rock', afterpunk: 'rock',
-    metal: 'rock', soundsystem: 'jamaica', carioca: 'latin', westafrica: 'africa',
-    sahouse: 'house', hiphop: 'hiphop',
+    metal: 'metal', metalx: 'metal', rockfound: 'rock',
+    soundsystem: 'jamaica', carioca: 'latin', westafrica: 'africa', sahouse: 'house', hiphop: 'hiphop',
+    folk: 'folk', brazilroots: 'brazilroots', asia: 'asia',
   };
   const FAMILY_GENRES = {};
   CHAPTERS.forEach((ch) => {
@@ -305,6 +393,10 @@
     latin: ['Neon Perreo', 'Volt Dembow', 'Ember Baile', 'Frost Funk', 'Solar Perreo', 'Pulse Bass'],
     africa: ['Dusk Soul', 'Iron Funk', 'Echo Highlife', 'Velvet Soul', 'Golden Azonto', 'Solar Pop'],
     hiphop: ['Ember Trap', 'Onyx Drill', 'Dusk Soul', 'Shadow Rap', 'Cloud Trap', 'Iron Boom', 'Ghost Phonk'],
+    metal: ['Iron Doom', 'Void Metal', 'Crypt Core', 'Ash Metal', 'Storm Metal', 'Grave Core'],
+    folk: ['Hearth Folk', 'Pale Folk', 'River Folk', 'Hollow Folk', 'Birch Folk', 'Briar Folk'],
+    brazilroots: ['Soft Samba', 'Rio Bossa', 'Verde Samba', 'Sol Samba', 'Lazy Bossa'],
+    asia: ['Neo Seoul', 'Tokyo Wave', 'Pastel Pop', 'Hyper Seoul', 'Shibuya Gold'],
   };
 
   const CLIP_MS = 20000;       // each clip plays 20s
