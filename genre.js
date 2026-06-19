@@ -310,7 +310,6 @@
   const CLIP_MS = 20000;       // each clip plays 20s
   const CLIPS = 3;             // up to 3 clips per round
   const TIERS = [1000, 600, 300]; // points by song: 1st / 2nd / 3rd clip
-  const CHAPTER_LEN = 12;      // questions per chapter (sub-genres cycle to fill)
   const FETCH_TIMEOUT = 7000;
 
   // ====================================================================
@@ -362,7 +361,6 @@
   const ceGrade = document.getElementById('ceGrade');
   const ceGradeLabel = document.getElementById('ceGradeLabel');
 
-  const scoreStat = document.getElementById('scoreStat');
   const footerStreak = document.getElementById('footerStreak');
   const bestEl = document.getElementById('bestScore');
   const player = document.getElementById('player');
@@ -398,19 +396,8 @@
   }
   function escapeHtml(s) { return String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
 
-  // Build a play order: shuffle the chapter's sub-genres and cycle until we
-  // reach CHAPTER_LEN, avoiding the same sub-genre twice in a row.
-  function buildQueue(ch) {
-    const base = ch.rounds.map((_, i) => i);
-    const target = Math.max(CHAPTER_LEN, base.length);
-    let q = [];
-    while (q.length < target) {
-      const s = shuffle(base);
-      if (q.length && s[0] === q[q.length - 1] && s.length > 1) { const j = 1 + Math.floor(Math.random() * (s.length - 1)); const t = s[0]; s[0] = s[j]; s[j] = t; }
-      q = q.concat(s);
-    }
-    return q.slice(0, target);
-  }
+  // One shuffled pass through the chapter's sub-genres (each played once).
+  function buildQueue(ch) { return shuffle(ch.rounds.map((_, i) => i)); }
   function show(view) { Object.keys(views).forEach((k) => { views[k].hidden = k !== view; }); }
   function setTheme(pair) { stageEl.style.setProperty('--c1', pair[0]); stageEl.style.setProperty('--c2', pair[1]); }
   function chBestKey(ch) { return 'rt_best_' + ch.id; }
@@ -427,7 +414,7 @@
     else if (pct >= 64) letter = 'C'; else if (pct >= 48) letter = 'D';
     return { letter: letter, label: GRADE_LABELS[letter] };
   }
-  function updateFooter() { scoreStat.textContent = chapterScore; footerStreak.textContent = streak; bestEl.textContent = best; }
+  function updateFooter() { footerStreak.textContent = streak; bestEl.textContent = best; }
 
   function jsonpSearch(term) {
     return new Promise((resolve, reject) => {
@@ -587,7 +574,7 @@
     }
 
     renderOptions(round, ch);
-    askEl.textContent = 'What genre is this?';
+    askEl.textContent = '';
     show('round');
     startSequence();
   }
@@ -622,7 +609,7 @@
     // Correct — bank points (more for an earlier song) and reveal.
     if (choice === round.genre) {
       const award = TIERS[Math.min(clipIdx, TIERS.length - 1)];
-      const rating = ['Excellent', 'Great', 'Good'][Math.min(clipIdx, 2)];
+      const rating = ['Perfect', 'Excellent', 'Good'][Math.min(clipIdx, 2)];
       answered = true;
       clearTimers(); stopAudio();
       Array.from(optionsEl.querySelectorAll('.option')).forEach((b) => {
@@ -643,8 +630,8 @@
     btn.disabled = true;
 
     if (clipIdx < clips.length - 1) {
-      askEl.textContent = 'Unlucky — try again';
-      setTimeout(() => { if (!answered) askEl.textContent = 'What genre is this?'; }, 1400);
+      askEl.textContent = 'Wrong — try again';
+      setTimeout(() => { if (!answered) askEl.textContent = ''; }, 1600);
       playClipAt(clipIdx + 1);
     } else {
       // out of songs — it's a miss; reveal the answer.
@@ -673,7 +660,7 @@
     lin.innerHTML = (round.from && round.from.length) ? ('Descends from <b>' + round.from.map(escapeHtml).join(' + ') + '</b>') : '';
 
     const ch = CHAPTERS[chapterIdx];
-    nextBtn.textContent = (roundIdx >= ch.rounds.length - 1) ? 'Finish chapter' : 'Next track';
+    nextBtn.textContent = (roundIdx >= roundQueue.length - 1) ? 'Finish chapter' : 'Next';
     show('reveal');
   }
 
@@ -730,7 +717,7 @@
     ceGrade.textContent = g.letter;
     ceGradeLabel.textContent = g.label + (isBest ? ' · new best!' : '');
     ceTitle.textContent = ch.title;
-    ceScore.textContent = chapterCorrect + ' / ' + total + ' correct · ' + chapterScore.toLocaleString() + ' pts';
+    ceScore.textContent = chapterCorrect + ' / ' + total + ' correct';
     ceOutro.textContent = ch.outro;
     show('chapterEnd');
   }

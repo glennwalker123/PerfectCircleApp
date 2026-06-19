@@ -127,7 +127,9 @@ html, body {
 .verdict { font-family: var(--display); font-size: 24px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--ink); animation: popIn 480ms cubic-bezier(.2,.9,.3,1.25); }
 .verdict.bad { opacity: 0.7; }
 .verdict:empty { display: none; }
-.ask { font-family: var(--display); font-size: 21px; font-weight: 700; color: var(--ink); margin: 2px 0; }
+.ask { font-family: var(--display); font-size: 19px; font-weight: 700; color: var(--ink); margin: 2px 0; min-height: 24px; }
+.ask:empty { display: none; }
+.controls { justify-content: center; }
 .points-awarded { font-family: var(--display); font-size: 60px; font-weight: 700; color: var(--ink); line-height: 0.95; letter-spacing: -2px; animation: popIn 560ms cubic-bezier(.2,.9,.3,1.25); }
 .points-awarded:empty { display: none; }
 .genre-name { font-family: var(--display); font-size: 46px; font-weight: 700; letter-spacing: -1.4px; line-height: 0.96; margin: 0; color: var(--ink); animation: popIn 520ms 60ms cubic-bezier(.2,.9,.3,1.2) backwards; }
