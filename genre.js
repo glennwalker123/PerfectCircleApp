@@ -334,6 +334,7 @@
   const skipBtn = document.getElementById('skipBtn');
   const helpBtn = document.getElementById('helpBtn');
   const helpDoneBtn = document.getElementById('helpDoneBtn');
+  const shareBtn = document.getElementById('shareBtn');
   const nextBtn = document.getElementById('nextBtn');
   const ceBackBtn = document.getElementById('ceBackBtn');
 
@@ -342,6 +343,8 @@
   const chScene = document.getElementById('chScene');
   const chIntro = document.getElementById('chIntro');
   const pbFill = document.getElementById('pbFill');
+  const songTag = document.getElementById('songTag');
+  const askEl = document.getElementById('ask');
   const eqEl = document.getElementById('eq');
   const optionsEl = document.getElementById('options');
   const errorText = document.getElementById('errorText');
@@ -372,6 +375,7 @@
   let chapterIdx = 0, roundIdx = 0;
   let chapterScore = 0;
   let chapterCorrect = 0;
+  let currentGrade = 'F';
   let answered = false;
   let audioCtx = null;
   let clips = [];              // resolved metas for the active round
@@ -494,6 +498,7 @@
   function playClipAt(i) {
     clipIdx = i;
     currentMeta = clips[i];
+    songTag.textContent = 'Song ' + (i + 1) + ' of ' + clips.length;
     try { player.src = clips[i].previewUrl; player.currentTime = 0; const p = player.play(); if (p && p.catch) p.catch(() => {}); } catch (_) {}
     eqEl.classList.remove('paused');
 
@@ -582,6 +587,7 @@
     }
 
     renderOptions(round, ch);
+    askEl.textContent = 'What genre is this?';
     show('round');
     startSequence();
   }
@@ -616,6 +622,7 @@
     // Correct — bank points (more for an earlier song) and reveal.
     if (choice === round.genre) {
       const award = TIERS[Math.min(clipIdx, TIERS.length - 1)];
+      const rating = ['Excellent', 'Great', 'Good'][Math.min(clipIdx, 2)];
       answered = true;
       clearTimers(); stopAudio();
       Array.from(optionsEl.querySelectorAll('.option')).forEach((b) => {
@@ -626,7 +633,7 @@
       chapterScore += award; chapterCorrect += 1; streak += 1;
       if (streak > best) { best = streak; localStorage.setItem('rt_best', String(best)); }
       playChime(); updateFooter();
-      setTimeout(() => showReveal(round, true, award), 550);
+      setTimeout(() => showReveal(round, true, rating), 550);
       return;
     }
 
@@ -636,6 +643,8 @@
     btn.disabled = true;
 
     if (clipIdx < clips.length - 1) {
+      askEl.textContent = 'Unlucky — try again';
+      setTimeout(() => { if (!answered) askEl.textContent = 'What genre is this?'; }, 1400);
       playClipAt(clipIdx + 1);
     } else {
       // out of songs — it's a miss; reveal the answer.
@@ -644,14 +653,14 @@
       const ans = Array.from(optionsEl.querySelectorAll('.option')).find((b) => b.textContent === round.genre);
       if (ans) ans.classList.add('correct');
       streak = 0; updateFooter();
-      setTimeout(() => showReveal(round, false, 0), 900);
+      setTimeout(() => showReveal(round, false, 'Wrong'), 900);
     }
   }
 
-  function showReveal(round, correct, gained) {
-    verdictEl.textContent = correct ? 'Correct' : 'Not quite';
+  function showReveal(round, correct, rating) {
+    verdictEl.textContent = rating;
     verdictEl.className = 'verdict ' + (correct ? 'good' : 'bad');
-    revPoints.textContent = correct ? ('+' + gained) : '';
+    revPoints.textContent = '';
     revName.textContent = round.genre;
     revMeta.textContent = CHAPTERS[chapterIdx].scene;
     if (currentMeta) {
@@ -670,11 +679,49 @@
 
   function nextRound() { roundIdx += 1; loadRound(); }
 
+  // ====================================================================
+  //  Share (WhatsApp / native share sheet) with a generated result card
+  // ====================================================================
+  function makeShareImage(grade, title) {
+    const c = document.createElement('canvas'); c.width = 1080; c.height = 1080;
+    const x = c.getContext('2d');
+    const cols = CHAPTER_COLORS[CHAPTERS[chapterIdx].id] || HOME_COLORS;
+    const g = x.createLinearGradient(0, 0, 1080, 1080); g.addColorStop(0, cols[0]); g.addColorStop(1, cols[1]);
+    x.fillStyle = g; x.fillRect(0, 0, 1080, 1080);
+    x.fillStyle = '#0d0b1a'; x.textAlign = 'center';
+    x.font = '700 84px "Space Grotesk", Arial, sans-serif'; x.fillText('ROOTS', 540, 170);
+    x.font = '600 34px Arial, sans-serif'; x.fillText('GUESS THE SUB-GENRE', 540, 226);
+    x.font = '700 380px "Space Grotesk", Arial, sans-serif'; x.fillText(grade, 540, 690);
+    x.font = '700 52px "Space Grotesk", Arial, sans-serif'; x.fillText(title, 540, 820);
+    x.font = '500 38px Arial, sans-serif'; x.fillText(chapterCorrect + ' / ' + roundQueue.length + ' correct', 540, 884);
+    return c;
+  }
+
+  function shareResult() {
+    const ch = CHAPTERS[chapterIdx];
+    const text = 'I scored ' + currentGrade + ' on ROOTS — guess the sub-genre 🎧';
+    const url = location.href;
+    const canvas = makeShareImage(currentGrade, ch.title);
+    canvas.toBlob((blob) => {
+      const file = blob ? new File([blob], 'roots-result.png', { type: 'image/png' }) : null;
+      (async () => {
+        try {
+          if (file && navigator.canShare && navigator.canShare({ files: [file] })) {
+            await navigator.share({ files: [file], text: text + ' ' + url }); return;
+          }
+          if (navigator.share) { await navigator.share({ text: text, url: url }); return; }
+        } catch (e) { return; } // user cancelled or share failed silently
+        window.open('https://wa.me/?text=' + encodeURIComponent(text + ' ' + url), '_blank');
+      })();
+    }, 'image/png');
+  }
+
   function showChapterEnd() {
     clearTimers(); stopAudio();
     const ch = CHAPTERS[chapterIdx];
     const total = roundQueue.length;
     const g = gradeFor(chapterScore, chapterCorrect, total);
+    currentGrade = g.letter;
 
     const prevGrade = localStorage.getItem(chGradeKey(ch));
     const isBest = !prevGrade || GRADE_ORDER.indexOf(g.letter) > GRADE_ORDER.indexOf(prevGrade);
@@ -712,6 +759,7 @@
   ceBackBtn.addEventListener('click', navHome);
   helpBtn.addEventListener('click', () => show('help'));
   helpDoneBtn.addEventListener('click', () => { localStorage.setItem('rt_help', '1'); goHome(); });
+  shareBtn.addEventListener('click', shareResult);
   window.addEventListener('hashchange', applyRoute);
   window.addEventListener('popstate', applyRoute);
 

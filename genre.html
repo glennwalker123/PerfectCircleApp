@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="genre.css?v=16" />
+<link rel="stylesheet" href="genre.css?v=17" />
 </head>
 <body>
   <div class="app">
@@ -72,12 +72,14 @@
 
       <!-- Guessing -->
       <section class="view" id="vRound" hidden>
+        <span class="round-tag" id="songTag">Song 1 of 3</span>
         <div class="playbar" id="playbar">
           <div class="pb-fill" id="pbFill"></div>
           <span class="pb-tick" style="left:33.33%"></span>
           <span class="pb-tick" style="left:66.66%"></span>
         </div>
         <div class="eq" id="eq" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
+        <h2 class="ask" id="ask">What genre is this?</h2>
         <div class="options" id="options"></div>
       </section>
 
@@ -101,7 +103,10 @@
         <h2 class="chapter-title" id="ceTitle"></h2>
         <span class="score-line" id="ceScore"></span>
         <p class="lead" id="ceOutro"></p>
-        <button class="btn btn-big" id="ceBackBtn">Back to chapters</button>
+        <div class="row">
+          <button class="btn btn-ghost" id="ceBackBtn">Back</button>
+          <button class="btn btn-big" id="shareBtn">Share</button>
+        </div>
       </section>
     </div>
 
@@ -116,6 +121,6 @@
   </div>
 
   <audio id="player" preload="auto"></audio>
-  <script src="genre.js?v=16"></script>
+  <script src="genre.js?v=17"></script>
 </body>
 </html>
