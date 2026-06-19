@@ -356,6 +356,8 @@
   const ceTitle = document.getElementById('ceTitle');
   const ceOutro = document.getElementById('ceOutro');
   const ceScore = document.getElementById('ceScore');
+  const ceGrade = document.getElementById('ceGrade');
+  const ceGradeLabel = document.getElementById('ceGradeLabel');
 
   const scoreStat = document.getElementById('scoreStat');
   const footerStreak = document.getElementById('footerStreak');
@@ -369,6 +371,7 @@
   let streak = 0;
   let chapterIdx = 0, roundIdx = 0;
   let chapterScore = 0;
+  let chapterCorrect = 0;
   let answered = false;
   let audioCtx = null;
   let clips = [];              // resolved metas for the active round
@@ -407,6 +410,19 @@
   function show(view) { Object.keys(views).forEach((k) => { views[k].hidden = k !== view; }); }
   function setTheme(pair) { stageEl.style.setProperty('--c1', pair[0]); stageEl.style.setProperty('--c2', pair[1]); }
   function chBestKey(ch) { return 'rt_best_' + ch.id; }
+  function chGradeKey(ch) { return 'rt_grade_' + ch.id; }
+
+  // Grade weights correctness most, with a speed bonus for early answers.
+  const GRADE_LABELS = { A: 'Crate digger', B: 'Solid selector', C: 'Getting there', D: 'Back to the shop', F: 'Tin ear' };
+  const GRADE_ORDER = ['F', 'D', 'C', 'B', 'A'];
+  function gradeFor(score, correct, total) {
+    const speed = correct ? score / (correct * 1000) : 0;          // 0.3 .. 1
+    const pct = total ? (correct / total) * (0.6 + 0.4 * speed) * 100 : 0;
+    let letter = 'F';
+    if (pct >= 90) letter = 'A'; else if (pct >= 78) letter = 'B';
+    else if (pct >= 64) letter = 'C'; else if (pct >= 48) letter = 'D';
+    return { letter: letter, label: GRADE_LABELS[letter] };
+  }
   function updateFooter() { scoreStat.textContent = chapterScore; footerStreak.textContent = streak; bestEl.textContent = best; }
 
   function jsonpSearch(term) {
@@ -513,8 +529,8 @@
       const name = document.createElement('span'); name.className = 'ch-name'; name.textContent = ch.title;
       const meta = document.createElement('span'); meta.className = 'ch-meta'; meta.textContent = ch.scene;
       body.appendChild(name); body.appendChild(meta);
-      const bestVal = parseInt(localStorage.getItem(chBestKey(ch)) || '0', 10);
-      const bv = document.createElement('span'); bv.className = 'ch-best'; bv.textContent = bestVal ? (bestVal + ' pts') : 'New';
+      const bestGrade = localStorage.getItem(chGradeKey(ch));
+      const bv = document.createElement('span'); bv.className = 'ch-best'; bv.textContent = bestGrade ? ('Best ' + bestGrade) : 'New';
       const cc = CHAPTER_COLORS[ch.id] || HOME_COLORS;
       card.style.setProperty('--cc1', cc[0]); card.style.setProperty('--cc2', cc[1]);
       card.appendChild(num); card.appendChild(body); card.appendChild(bv);
@@ -532,7 +548,7 @@
   }
 
   function openChapter(i) {
-    chapterIdx = i; roundIdx = 0; chapterScore = 0; streak = 0;
+    chapterIdx = i; roundIdx = 0; chapterScore = 0; chapterCorrect = 0; streak = 0;
     const ch = CHAPTERS[i];
     roundQueue = buildQueue(ch);
     setTheme(CHAPTER_COLORS[ch.id] || HOME_COLORS);
@@ -607,7 +623,7 @@
         if (b.textContent === round.genre) b.classList.add('correct');
         else if (!b.classList.contains('eliminated')) b.classList.add('dim');
       });
-      chapterScore += award; streak += 1;
+      chapterScore += award; chapterCorrect += 1; streak += 1;
       if (streak > best) { best = streak; localStorage.setItem('rt_best', String(best)); }
       playChime(); updateFooter();
       setTimeout(() => showReveal(round, true, award), 550);
@@ -657,11 +673,18 @@
   function showChapterEnd() {
     clearTimers(); stopAudio();
     const ch = CHAPTERS[chapterIdx];
-    const prevBest = parseInt(localStorage.getItem(chBestKey(ch)) || '0', 10);
-    if (chapterScore > prevBest) localStorage.setItem(chBestKey(ch), String(chapterScore));
+    const total = roundQueue.length;
+    const g = gradeFor(chapterScore, chapterCorrect, total);
+
+    const prevGrade = localStorage.getItem(chGradeKey(ch));
+    const isBest = !prevGrade || GRADE_ORDER.indexOf(g.letter) > GRADE_ORDER.indexOf(prevGrade);
+    if (isBest) localStorage.setItem(chGradeKey(ch), g.letter);
+
+    ceGrade.textContent = g.letter;
+    ceGradeLabel.textContent = g.label + (isBest ? ' · new best!' : '');
     ceTitle.textContent = ch.title;
+    ceScore.textContent = chapterCorrect + ' / ' + total + ' correct · ' + chapterScore.toLocaleString() + ' pts';
     ceOutro.textContent = ch.outro;
-    ceScore.textContent = 'You scored ' + chapterScore + ' pts' + (chapterScore > prevBest ? ' — new best!' : (prevBest ? ' (best ' + prevBest + ')' : ''));
     show('chapterEnd');
   }
 

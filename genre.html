@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="genre.css?v=15" />
+<link rel="stylesheet" href="genre.css?v=16" />
 </head>
 <body>
   <div class="app">
@@ -96,9 +96,11 @@
       <!-- Chapter complete -->
       <section class="view" id="vChapterEnd" hidden>
         <span class="kicker">Chapter complete</span>
+        <div class="grade" id="ceGrade">A</div>
+        <span class="grade-label" id="ceGradeLabel"></span>
         <h2 class="chapter-title" id="ceTitle"></h2>
-        <p class="lead" id="ceOutro"></p>
         <span class="score-line" id="ceScore"></span>
+        <p class="lead" id="ceOutro"></p>
         <button class="btn btn-big" id="ceBackBtn">Back to chapters</button>
       </section>
     </div>
@@ -114,6 +116,6 @@
   </div>
 
   <audio id="player" preload="auto"></audio>
-  <script src="genre.js?v=15"></script>
+  <script src="genre.js?v=16"></script>
 </body>
 </html>
